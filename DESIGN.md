@@ -155,6 +155,21 @@ Il tipo si capisce dal testo e dal titolo, non solo dal colore.
 - I messaggi d'errore dicono cosa è successo e cosa fare, senza colpevolizzare.
 - Nessun riferimento visivo esterno da seguire.
 
+## 12. Loghi
+
+File in `public/brand/`.
+
+| File                       | Contenuto                           | Dove si usa                                                                        |
+| -------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------- |
+| `neos-on-light.png`        | Logo NEOS blu scuro con "O" sfumata | Su sfondi chiari (bianco, `neutral-50`)                                            |
+| `neos-on-dark.png`         | Logo NEOS bianco con "O" sfumata    | Su sfondi scuri (Deep Blue)                                                        |
+| `merlara-coat-of-arms.svg` | Stemma del Comune di Merlara        | Solo in grande (pagina di accesso, piè di pagina); troppo dettagliato per le icone |
+
+- I loghi non si ricolorano, non si deformano e non si ritagliano.
+- **Icona del sito**: per ora nessuna. Il committente fornirà la "O" sfumata di NEOS.
+- **Convivenza dei due loghi**: da definire con il committente quando arrivano le prime schermate (S4).
+- **Stemma**: disegno da Wikimedia Commons (CC BY-SA 4.0), ottimizzato. L'uso dello stemma va autorizzato dal Comune prima del lancio; crediti nel README.
+
 ## 11. Modifiche rinviate
 
 Richieste di modifica al frontend puro emerse durante i lavori, da realizzare a fine progetto.

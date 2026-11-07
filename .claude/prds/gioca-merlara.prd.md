@@ -73,7 +73,7 @@ Ogni domanda ha un proprietario. Nessuna scadenza, per scelta del committente; i
 - [ ] **Curatore**: come si registrano i visitatori senza codice fiscale (es. stranieri), visto che il profilo lo richiede?
 - [ ] **Curatore**: l'annullo di una fascia gratuita genera qualcosa, visto che il voucher vale solo sulle fasce a pagamento?
 - [ ] **Curatore**: orario settimanale di default e periodi di indisponibilità; sopralluogo tecnico — punti di montaggio dei due lucchetti, compatibilità dei varchi, esistenza di chiavi di servizio (bagni, quadro luci): se esistono, restano in un box aperto interno
-- [ ] **Direttivo NEOS**: accordo formale col Comune per gestione e incassi; struttura tariffaria (quali fasce gratuite, quali importi); titolare del trattamento dei dati personali; rotazione del reperibile
+- [ ] **Direttivo NEOS**: accordo formale col Comune per gestione e incassi, comprensivo dell'autorizzazione a usare lo stemma comunale (ed eventuale file ufficiale); struttura tariffaria (quali fasce gratuite, quali importi); titolare del trattamento dei dati personali; rotazione del reperibile
 - [ ] **Sviluppo**: scelta del PSP (Stripe / Satispay / PayPal); provider email e SMS (es. Twilio per gli SMS); dettagli di integrazione dell'API igloohome (algoPIN, massimo 199 PIN attivi per lucchetto, PIN non revocabili da remoto). Verificare se il limite di 199 PIN attivi conta i PIN già generati per l'intero orizzonte di prenotazione: con slot da 60 minuti e orizzonte di 14 giorni, un orario di apertura di 14 ore al giorno arriva a 196 PIN
 
 ## Rischi

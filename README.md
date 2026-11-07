@@ -68,3 +68,8 @@ DESIGN.md         regole di stile dell'interfaccia
 - **Test**: unitari accanto al modulo (`modulo.test.ts`), end-to-end in `e2e/`. La logica si scrive test-first.
 - **Stile**: l'interfaccia segue solo [`DESIGN.md`](DESIGN.md). Le richieste di modifica al frontend puro si annotano tra le "Modifiche rinviate" di `DESIGN.md`.
 - **Next.js 16**: alcune API differiscono dalle versioni precedenti; prima di scrivere codice consultare la guida inclusa in `node_modules/next/dist/docs/` (vedi [`AGENTS.md`](AGENTS.md)).
+
+## Crediti
+
+- Stemma del Comune di Merlara: [Merlara-Stemma.svg](https://commons.wikimedia.org/wiki/File:Merlara-Stemma.svg), Wikimedia Commons, licenza [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). Versione ottimizzata con SVGO in `public/brand/merlara-coat-of-arms.svg`, distribuita con la stessa licenza. Lo stemma è un'insegna ufficiale: il suo uso richiede l'autorizzazione del Comune.
+- Logo NEOS APS: proprietà dell'associazione.
