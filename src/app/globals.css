@@ -1,3 +1,128 @@
 @import "tailwindcss";
 
-/* Il tema (colori, tipografia, spaziature) arriva da DESIGN.md nel sottotask 1.9. */
+/* Tema derivato da DESIGN.md. Solo questi colori sono disponibili:
+   la palette di default di Tailwind è disattivata. */
+@theme {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-blue-50: #f0f5ff;
+  --color-blue-100: #dde8fe;
+  --color-blue-200: #bad2ff;
+  --color-blue-300: #92b4f6;
+  --color-blue-400: #6c93e3;
+  --color-blue-500: #4973cb;
+  --color-blue-600: #2a54b0;
+  --color-blue-700: #09318d; /* Deep Blue */
+  --color-blue-800: #022681;
+  --color-blue-900: #00175c;
+
+  --color-pink-50: #fff1f7;
+  --color-pink-100: #fedded;
+  --color-pink-200: #ffb9dd;
+  --color-pink-300: #fd91cc; /* Bubblegum Pink */
+  --color-pink-400: #d36da6;
+  --color-pink-500: #af5187;
+  --color-pink-600: #8b3868;
+  --color-pink-700: #6e2551;
+  --color-pink-800: #55173d;
+  --color-pink-900: #3d092a;
+
+  --color-neutral-50: #f3f5f9;
+  --color-neutral-100: #e4e8f0;
+  --color-neutral-200: #cdd1d9;
+  --color-neutral-300: #b0b4bc;
+  --color-neutral-400: #91959d;
+  --color-neutral-500: #74777f;
+  --color-neutral-600: #575b62;
+  --color-neutral-700: #42454c;
+  --color-neutral-800: #303339;
+  --color-neutral-900: #1f2228;
+
+  --color-success-50: #e0ffe5;
+  --color-success-100: #ccf4d3;
+  --color-success-200: #90e9a3;
+  --color-success-300: #73cb87;
+  --color-success-400: #52ab69;
+  --color-success-500: #318c4c;
+  --color-success-600: #0e6d32;
+  --color-success-700: #035424;
+  --color-success-800: #023e19;
+  --color-success-900: #062911;
+
+  --color-warning-50: #fff3e4;
+  --color-warning-100: #ffe3be;
+  --color-warning-200: #fec675;
+  --color-warning-300: #e4a74a;
+  --color-warning-400: #c38824;
+  --color-warning-500: #9f6c0a;
+  --color-warning-600: #7a5209;
+  --color-warning-700: #5e3d01;
+  --color-warning-800: #462d01;
+  --color-warning-900: #301d01;
+
+  --color-error-50: #fff2f0;
+  --color-error-100: #fee0dc;
+  --color-error-200: #febfb9;
+  --color-error-300: #fc928a;
+  --color-error-400: #da736c;
+  --color-error-500: #b8544f;
+  --color-error-600: #963633;
+  --color-error-700: #7c1d1e;
+  --color-error-800: #65000a;
+  --color-error-900: #3a1412;
+
+  /* Ruoli (DESIGN.md §2) */
+  --color-page: var(--color-neutral-50);
+  --color-surface: var(--color-white);
+  --color-text: var(--color-neutral-900);
+  --color-text-muted: var(--color-neutral-600);
+  --color-primary: var(--color-blue-700);
+  --color-primary-strong: var(--color-blue-800);
+  --color-field-border: var(--color-neutral-500);
+  --color-divider: var(--color-neutral-200);
+  --color-accent: var(--color-pink-300);
+  --color-accent-soft: var(--color-pink-100);
+
+  /* Tipografia (DESIGN.md §3) */
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.4;
+  --text-base: 1rem;
+  --text-base--line-height: 1.5;
+  --text-lg: 1.125rem;
+  --text-lg--line-height: 1.5;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.3;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 1.25;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 1.2;
+
+  /* Forme ed ombre (DESIGN.md §5) */
+  --radius-control: 12px;
+  --radius-card: 16px;
+
+  --shadow-card: 0 1px 2px rgb(9 49 141 / 0.06), 0 2px 8px rgb(9 49 141 / 0.08);
+  --shadow-raised:
+    0 4px 12px rgb(9 49 141 / 0.1), 0 12px 32px rgb(9 49 141 / 0.12);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-page);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    color: var(--color-primary);
+  }
+}
