@@ -1,0 +1,10 @@
+# Segreti — mai in git
+.env
+.env*.local
+
+# Dipendenze e build (sarà ampliato con lo scaffolding del Task 1)
+node_modules/
+.next/
+
+# Sistema
+.DS_Store
