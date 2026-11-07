@@ -1,10 +1,32 @@
 # Segreti — mai in git
 .env
 .env*.local
+*.pem
 
-# Dipendenze e build (sarà ampliato con lo scaffolding del Task 1)
-node_modules/
-.next/
+# Dipendenze
+/node_modules
+/.pnp
+.pnp.*
+
+# Next.js e build
+/.next/
+/out/
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# Test
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Log
+npm-debug.log*
+
+# Hosting
+.vercel
 
 # Sistema
 .DS_Store
