@@ -37,6 +37,7 @@ export function Button({
     <button
       type={type}
       disabled={disabled || pending}
+      aria-busy={pending || undefined}
       className={cx(
         "inline-flex min-h-11 items-center justify-center rounded-control px-4 text-base leading-tight font-semibold",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",

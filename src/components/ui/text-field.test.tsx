@@ -33,6 +33,27 @@ describe("TextField", () => {
     );
   });
 
+  test("le proprietà passate non scollegano aiuto ed errore", () => {
+    render(
+      <>
+        <p id="extra">Usato per la ricevuta</p>
+        <TextField
+          label="Codice fiscale"
+          hint="16 caratteri"
+          aria-describedby="extra"
+          aria-invalid={false}
+          error="Non valido."
+          name="taxCode"
+        />
+      </>,
+    );
+    const input = screen.getByLabelText("Codice fiscale");
+    expect(input).toHaveAttribute("aria-invalid", "true");
+    expect(input).toHaveAccessibleDescription(
+      "Usato per la ricevuta 16 caratteri Non valido.",
+    );
+  });
+
   test("senza errore il campo è valido", () => {
     render(<TextField label="Nome" name="firstName" />);
     expect(screen.getByLabelText("Nome")).not.toHaveAttribute("aria-invalid");

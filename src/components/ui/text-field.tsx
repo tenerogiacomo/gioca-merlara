@@ -13,12 +13,14 @@ export function TextField({
   hint,
   error,
   className,
+  "aria-describedby": describedByProp,
   ...props
 }: TextFieldProps) {
   const id = useId();
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
-  const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+  const describedBy =
+    [describedByProp, hintId, errorId].filter(Boolean).join(" ") || undefined;
 
   return (
     <div className={cx("flex flex-col gap-1", className)}>
@@ -31,6 +33,7 @@ export function TextField({
         </p>
       )}
       <input
+        {...props}
         id={id}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
@@ -41,7 +44,6 @@ export function TextField({
             ? "border-error-600 focus:border-error-600"
             : "border-field-border focus:border-primary",
         )}
-        {...props}
       />
       {error && (
         <p id={errorId} className="text-sm text-error-700">
