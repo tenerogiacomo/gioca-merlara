@@ -22,6 +22,17 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-error-600 text-white shadow-card hover:bg-error-700 active:bg-error-700",
 };
 
+const baseClasses =
+  "inline-flex min-h-11 items-center justify-center rounded-control px-4 text-base leading-tight font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
+
+/** Classi del pulsante, per dare lo stesso aspetto a un link (es. `<Link>` di Next.js). */
+export function buttonClassName({
+  variant = "primary",
+  fullWidth = false,
+}: { variant?: ButtonVariant; fullWidth?: boolean } = {}): string {
+  return cx(baseClasses, variantClasses[variant], fullWidth && "w-full");
+}
+
 export function Button({
   variant = "primary",
   pending = false,
@@ -39,8 +50,7 @@ export function Button({
       disabled={disabled || pending}
       aria-busy={pending || undefined}
       className={cx(
-        "inline-flex min-h-11 items-center justify-center rounded-control px-4 text-base leading-tight font-semibold",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
+        baseClasses,
         "disabled:border-transparent disabled:bg-neutral-200 disabled:text-neutral-500 disabled:no-underline disabled:shadow-none",
         variantClasses[variant],
         fullWidth && "w-full",

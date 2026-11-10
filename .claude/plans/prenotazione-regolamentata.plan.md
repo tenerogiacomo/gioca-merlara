@@ -94,8 +94,8 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 |---|---|---|---|---|---|---|
 | S1 | Fondamenta del progetto e `DESIGN.md` | No | No | Scrive `DESIGN.md` con il committente | `m1/s1-fondamenta.plan.md` | complete |
 | S2 | Regole di dominio | No | No | — | `m1/s2-regole-dominio.plan.md` | complete |
-| S3 | Database e regole di accesso | Sì | Sì | — | `m1/s3-database-accessi.plan.md` | in-progress |
-| S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | — | pending |
+| S3 | Database e regole di accesso | Sì | Sì | — | `m1/s3-database-accessi.plan.md` | complete |
+| S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | `m1/s4-accesso-profilo.plan.md` | in-progress |
 | S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | — | pending |
@@ -157,11 +157,13 @@ Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma 
 - [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
 - [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
 - [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
+- [ ] Protezione dall'abuso degli SMS: captcha (Turnstile o hCaptcha) sull'invio del codice, limiti per indirizzo IP e per numero, tetto di spesa e paesi ammessi presso il provider SMS. L'app accetta già solo numeri italiani.
 - [ ] Limiti di frequenza su accesso con OTP e funzioni del calendario (es. al livello dell'hosting).
+- [ ] Durata del codice SMS nel pannello Supabase ridotta a 5–10 minuti.
 - [ ] Provider SMS reale configurato.
 - [ ] Informativa privacy (nome del prenotante visibile agli utenti con profilo), titolare del trattamento.
 - [ ] Autorizzazione del Comune all'uso dello stemma.
-- [ ] Security Advisor di Supabase senza avvisi non motivati.
+- [ ] Security Advisor di Supabase senza avvisi non motivati (pulito il 10 novembre 2026 dopo S3; da ricontrollare).
 
 ### Flusso di lavoro di ogni step
 1. Claude scrive il sotto-piano dello step con specifiche e sottotask; il committente lo approva o lo corregge.

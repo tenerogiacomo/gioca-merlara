@@ -167,11 +167,11 @@ File in `public/brand/`.
 
 - I loghi non si ricolorano, non si deformano e non si ritagliano.
 - **Icona del sito**: per ora nessuna. Il committente fornirà la "O" sfumata di NEOS.
-- **Convivenza dei due loghi**: da definire con il committente quando arrivano le prime schermate (S4).
+- **Convivenza dei due loghi** (scelta delegata a Claude il 10 novembre 2026): logo NEOS (`neos-on-light.png`) nell'intestazione di ogni pagina, alto 32 px, con collegamento alla pagina iniziale; stemma del Comune nel piè di pagina, alto 48 px, accanto alla dicitura "In collaborazione con il Comune di Merlara" in testo piccolo `neutral-600`. NEOS è il curatore del servizio; lo stemma, molto dettagliato, non va rimpicciolito oltre.
 - **Stemma**: disegno da Wikimedia Commons (CC BY-SA 4.0), ottimizzato. L'uso dello stemma va autorizzato dal Comune prima del lancio; crediti nel README.
 
 ## 11. Modifiche rinviate
 
 Richieste di modifica al frontend puro emerse durante i lavori, da realizzare a fine progetto.
 
-_Nessuna per ora._
+- **Nuovo design di accesso e pagina iniziale** (annunciato dal committente il 10 novembre 2026): sostituirà il look and feel di `/`, `/accedi` e `/accedi/codice`. Queste schermate sono isolate in pochi componenti per facilitare il restyling.
