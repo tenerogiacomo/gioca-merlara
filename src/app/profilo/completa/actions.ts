@@ -103,7 +103,13 @@ export async function saveProfileAction(
       tax_code: taxCode.value,
     });
   if (error?.code === "23505") {
-    if (error.message.includes("profiles_pkey")) redirect("/profilo");
+    // Due salvataggi contemporanei: il secondo trova già il profilo e mostra quello salvato.
+    const existing = await createSupabaseServiceClient()
+      .from("profiles")
+      .select("id")
+      .eq("id", user.id)
+      .maybeSingle();
+    if (existing.data) redirect("/profilo");
     return fail("duplicate_tax_code", "taxCode");
   }
   if (error) {

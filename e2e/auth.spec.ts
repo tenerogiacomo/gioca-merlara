@@ -28,6 +28,15 @@ test("un numero non valido viene segnalato", async ({ page }) => {
   await expect(page.getByText("Il numero non sembra valido")).toBeVisible();
 });
 
+test("per ora si accede solo con un numero italiano", async ({ page }) => {
+  await page.goto("/accedi");
+  await page.getByLabel("Numero di cellulare").fill("+41 79 123 45 67");
+  await page.getByRole("button", { name: "Inviami il codice" }).click();
+  await expect(
+    page.getByText("solo con un numero di cellulare italiano"),
+  ).toBeVisible();
+});
+
 test("accesso, profilo rifiutato, profilo salvato e uscita", async ({
   page,
 }) => {

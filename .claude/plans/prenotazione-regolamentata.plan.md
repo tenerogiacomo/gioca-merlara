@@ -157,7 +157,9 @@ Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma 
 - [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
 - [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
 - [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
+- [ ] Protezione dall'abuso degli SMS: captcha (Turnstile o hCaptcha) sull'invio del codice, limiti per indirizzo IP e per numero, tetto di spesa e paesi ammessi presso il provider SMS. L'app accetta già solo numeri italiani.
 - [ ] Limiti di frequenza su accesso con OTP e funzioni del calendario (es. al livello dell'hosting).
+- [ ] Durata del codice SMS nel pannello Supabase ridotta a 5–10 minuti.
 - [ ] Provider SMS reale configurato.
 - [ ] Informativa privacy (nome del prenotante visibile agli utenti con profilo), titolare del trattamento.
 - [ ] Autorizzazione del Comune all'uso dello stemma.

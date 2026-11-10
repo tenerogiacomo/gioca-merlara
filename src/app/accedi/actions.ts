@@ -30,7 +30,9 @@ export async function sendCodeAction(
     return {
       phone: input,
       error:
-        "Il numero non sembra valido: controllalo e, se è estero, aggiungi il prefisso (es. +41).",
+        phone.error === "unsupported_country"
+          ? "Per ora si accede solo con un numero di cellulare italiano."
+          : "Il numero non sembra valido: controlla di averlo scritto tutto.",
     };
   }
   const error = await sendOtp(phone.value);

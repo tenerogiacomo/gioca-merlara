@@ -3,10 +3,18 @@ import { err, ok, type Result } from "./result";
 const SEPARATORS = /[\s\-.()/]/g;
 
 /**
+ * Prefissi ammessi. Al lancio solo l'Italia: il profilo richiede comunque il codice fiscale,
+ * e limitare i paesi riduce l'abuso degli SMS verso numeri esteri a pagamento.
+ */
+export const ALLOWED_COUNTRY_CODES = ["39"] as const;
+
+/**
  * Normalizza un numero di telefono nel formato usato da Supabase Auth: cifre con il prefisso
  * internazionale, senza `+`. Senza prefisso (`+` o `00`) il numero è considerato italiano.
  */
-export function normalizePhone(input: string): Result<string, "invalid_phone"> {
+export function normalizePhone(
+  input: string,
+): Result<string, "invalid_phone" | "unsupported_country"> {
   const compact = input.replace(SEPARATORS, "");
   let international: string;
   if (/^\+\d+$/.test(compact)) international = compact.slice(1);
@@ -18,10 +26,12 @@ export function normalizePhone(input: string): Result<string, "invalid_phone"> {
   } else return err("invalid_phone");
 
   // E.164: al massimo 15 cifre; almeno 8 per un numero reale con prefisso.
-  if (international.length < 8 || international.length > 15)
+  if (international.length < 8 || international.length > 15) {
     return err("invalid_phone");
-  if (international.startsWith("39") && international.length < 8)
-    return err("invalid_phone");
+  }
+  if (!ALLOWED_COUNTRY_CODES.some((code) => international.startsWith(code))) {
+    return err("unsupported_country");
+  }
   return ok(international);
 }
 

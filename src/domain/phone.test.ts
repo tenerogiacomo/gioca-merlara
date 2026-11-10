@@ -9,8 +9,6 @@ describe("normalizePhone", () => {
     ["0039 333 1234567", "393331234567"],
     ["(333) 123.4567", "393331234567"],
     ["0429 85000", "39042985000"],
-    ["+41 79 123 45 67", "41791234567"],
-    ["+44 7911 123456", "447911123456"],
   ])("%s → %s", (input, expected) => {
     expect(normalizePhone(input)).toEqual({ ok: true, value: expected });
   });
@@ -30,9 +28,18 @@ describe("normalizePhone", () => {
   });
 });
 
+test.each([["+41 79 123 45 67"], ["+44 7911 123456"], ["0041 79 123 45 67"]])(
+  "rifiuta per ora i numeri esteri: %s",
+  (input) => {
+    expect(normalizePhone(input)).toEqual({
+      ok: false,
+      error: "unsupported_country",
+    });
+  },
+);
+
 describe("maskPhone", () => {
   test("mostra prefisso e ultime cifre", () => {
     expect(maskPhone("393331234567")).toBe("+39 ••• ••• 567");
-    expect(maskPhone("41791234567")).toBe("+41 ••• ••• 567");
   });
 });
