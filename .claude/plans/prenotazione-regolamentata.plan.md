@@ -93,8 +93,8 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 | Step | Contenuto | Richiede Task 0 | Revisione di sicurezza | Look and feel | Sotto-piano | Stato |
 |---|---|---|---|---|---|---|
 | S1 | Fondamenta del progetto e `DESIGN.md` | No | No | Scrive `DESIGN.md` con il committente | `m1/s1-fondamenta.plan.md` | complete |
-| S2 | Regole di dominio | No | No | — | `m1/s2-regole-dominio.plan.md` | in-progress |
-| S3 | Database e regole di accesso | Sì | Sì | — | — | pending |
+| S2 | Regole di dominio | No | No | — | `m1/s2-regole-dominio.plan.md` | complete |
+| S3 | Database e regole di accesso | Sì | Sì | — | `m1/s3-database-accessi.plan.md` | in-progress |
 | S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | — | pending |
@@ -151,6 +151,17 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
 ### S8 — Rifinitura e consegna
 - **Specifica**: Verifica che tutte le schermate seguano `DESIGN.md`. Passata su viewport mobile e accessibilità (contrasti, etichette, tastiera); un contrasto insufficiente viene segnalato al committente invece di cambiare i colori di propria iniziativa, con controllo automatico `@axe-core/playwright` sulle pagine di accesso, profilo, calendario, le mie prenotazioni e area superadmin. Runbook nel README in linguaggio semplice: avvio, test, migrazioni, assegnazione del superadmin, cosa fare se qualcosa non funziona. Verifica finale dei criteri di accettazione e aggiornamento della milestone 1 nel PRD.
 - **Uscita**: zero violazioni gravi o critiche di axe sulle pagine elencate; tutti i criteri della sezione Acceptance verificati.
+
+### Lista di controllo prima del lancio
+Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma raccolta qui per non perderla):
+- [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
+- [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
+- [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
+- [ ] Limiti di frequenza su accesso con OTP e funzioni del calendario (es. al livello dell'hosting).
+- [ ] Provider SMS reale configurato.
+- [ ] Informativa privacy (nome del prenotante visibile agli utenti con profilo), titolare del trattamento.
+- [ ] Autorizzazione del Comune all'uso dello stemma.
+- [ ] Security Advisor di Supabase senza avvisi non motivati.
 
 ### Flusso di lavoro di ogni step
 1. Claude scrive il sotto-piano dello step con specifiche e sottotask; il committente lo approva o lo corregge.

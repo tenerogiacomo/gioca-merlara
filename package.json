@@ -12,12 +12,21 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:push": "supabase db push --remote",
+    "db:types": "supabase gen types --lang typescript --remote < /dev/null > src/types/database.ts && prettier --write src/types/database.ts",
+    "admin:superadmin": "tsx --env-file=.env.local scripts/assign-superadmin.ts",
+    "db:seed": "tsx --env-file=.env.local scripts/seed-dev.ts",
+    "db:reset-test": "tsx --env-file=.env.local scripts/reset-test-data.ts",
+    "test:db": "vitest run --config vitest.db.config.mts"
   },
   "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
     "next": "16.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "server-only": "0.0.1",
     "temporal-polyfill": "1.0.8"
   },
   "devDependencies": {
@@ -37,7 +46,9 @@
     "jsdom": "31.0.0",
     "prettier": "3.9.10",
     "prettier-plugin-tailwindcss": "0.8.1",
+    "supabase": "3.1.0",
     "tailwindcss": "^4",
+    "tsx": "4.23.15",
     "typescript": "6.0.3",
     "vitest": "5.1.0"
   },
