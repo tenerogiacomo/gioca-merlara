@@ -29,7 +29,18 @@ export async function proxy(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+
+  // Area di gestione: per chi non è superadmin la pagina non esiste, con un vero 404.
+  // Pagine e server actions ricontrollano comunque il ruolo (requireSuperadmin).
+  const { pathname } = request.nextUrl;
+  const isAdminArea = pathname === "/admin" || pathname.startsWith("/admin/");
+  if (isAdminArea && data?.claims?.app_metadata?.role !== "superadmin") {
+    return NextResponse.rewrite(new URL("/pagina-non-trovata", request.url), {
+      status: 404,
+    });
+  }
+
   return response;
 }
 

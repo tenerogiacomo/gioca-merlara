@@ -109,3 +109,71 @@ export async function resetTestData(admin: AdminClient): Promise<number> {
   if (profiles.error) throw profiles.error;
   return ids.length;
 }
+
+export type ConfigSnapshot = {
+  sports: Database["public"]["Tables"]["sports"]["Row"][];
+  intervals: Database["public"]["Tables"]["opening_intervals"]["Row"][];
+  rules: Database["public"]["Tables"]["price_rules"]["Row"][];
+};
+
+/** Fotografia di orario, sport e prezzi, per i test che li modificano. */
+export async function snapshotConfig(
+  admin: AdminClient,
+): Promise<ConfigSnapshot> {
+  const [sports, intervals, rules] = await Promise.all([
+    admin.from("sports").select("*"),
+    admin.from("opening_intervals").select("*"),
+    admin.from("price_rules").select("*"),
+  ]);
+  for (const result of [sports, intervals, rules])
+    if (result.error) throw result.error;
+  return {
+    sports: sports.data!,
+    intervals: intervals.data!,
+    rules: rules.data!,
+  };
+}
+
+/** Ripristina la fotografia: stessi sport, stesso orario, stessi prezzi. */
+export async function restoreConfig(
+  admin: AdminClient,
+  snapshot: ConfigSnapshot,
+): Promise<void> {
+  const sports = await admin.from("sports").upsert(snapshot.sports);
+  if (sports.error) throw sports.error;
+  const keep = snapshot.sports.map((sport) => sport.id);
+  const extra = await admin
+    .from("sports")
+    .select("id")
+    .not("id", "in", `(${keep.join(",")})`);
+  if (extra.error) throw extra.error;
+  for (const { id } of extra.data) {
+    const removed = await admin.from("sports").delete().eq("id", id);
+    if (removed.error) throw removed.error;
+  }
+
+  const intervals = await admin.rpc("replace_opening_intervals", {
+    p_intervals: snapshot.intervals.map(({ weekday, opens, closes }) => ({
+      weekday,
+      opens,
+      closes,
+    })),
+  });
+  if (intervals.error) throw intervals.error;
+
+  for (const sport of snapshot.sports) {
+    const rules = snapshot.rules
+      .filter((rule) => rule.sport_id === sport.id)
+      .map((rule) => ({
+        weekdays: rule.weekdays,
+        from: rule.from_time,
+        to: rule.to_time,
+        priceCents: rule.price_cents,
+      }));
+    const result = await admin.rpc("replace_price_rules", {
+      p_sport_id: sport.id,
+      p_rules: rules,
+    });
+    if (result.error) throw result.error;
+  }
+}

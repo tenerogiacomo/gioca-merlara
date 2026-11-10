@@ -25,7 +25,8 @@ export type PriceRuleIssue = {
     | "not_aligned"
     | "empty_or_inverted"
     | "invalid_price"
-    | "overlap";
+    | "overlap"
+    | "mixed_free_paid";
 };
 
 type Range = { from: number; to: number };
@@ -91,6 +92,17 @@ export function validatePriceRules(
         overlaps(other.range, range),
     );
     if (clash) return issue("overlap");
+    // Una fascia è gratuita o a pagamento per tutti gli sport: niente gratis per uno e a pagamento
+    // per un altro nello stesso giorno e orario.
+    const isFree = rule.priceCents === 0;
+    const mixed = valid.some(
+      (other) =>
+        other.rule.sportId !== rule.sportId &&
+        (other.rule.priceCents === 0) !== isFree &&
+        other.rule.weekdays.some((day) => rule.weekdays.includes(day)) &&
+        overlaps(other.range, range),
+    );
+    if (mixed) return issue("mixed_free_paid");
     valid.push({ rule, range });
   });
   return issues;

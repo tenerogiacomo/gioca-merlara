@@ -232,6 +232,14 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      replace_opening_intervals: {
+        Args: { p_intervals: Json };
+        Returns: undefined;
+      };
+      replace_price_rules: {
+        Args: { p_rules: Json; p_sport_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       booking_status: "active" | "cancelled_by_user" | "cancelled_by_admin";

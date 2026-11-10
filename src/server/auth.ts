@@ -1,6 +1,6 @@
 import "server-only";
 import { cache } from "react";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -66,4 +66,14 @@ export async function requireProfile(
   const profile = await getProfile();
   if (!profile) redirect("/profilo/completa");
   return { user, profile };
+}
+
+/**
+ * Solo il superadmin. Per tutti gli altri, con o senza accesso, la pagina non esiste (404):
+ * così l'area di gestione non si rivela. Vale anche per le server actions.
+ */
+export async function requireSuperadmin(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user?.isSuperadmin) notFound();
+  return user;
 }
