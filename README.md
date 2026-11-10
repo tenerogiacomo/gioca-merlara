@@ -72,11 +72,12 @@ Il database vive nel progetto Supabase; la sua struttura è descritta dai file i
 ## Struttura
 
 ```
-src/app/          pagine e layout (Next.js App Router)
+src/app/          pagine e layout (Next.js App Router): /, /accedi, /accedi/codice, /profilo, /profilo/completa
 src/components/ui componenti di interfaccia di base
 src/domain/       regole di dominio pure (slot, prezzi, codice fiscale, età)
 src/lib/supabase/ client Supabase (server, browser, servizio solo server)
 src/server/db/    conversioni tra database e dominio
+src/server/auth.ts  controllo della sessione (Data Access Layer): unico punto che legge l'utente corrente
 src/proxy.ts      aggiornamento della sessione a ogni richiesta
 supabase/         configurazione e migrazioni del database
 scripts/          script operativi (superadmin, dati di esempio, pulizia)
