@@ -133,7 +133,7 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
   - il superadmin assegnato dallo script legge tutto.
 
 ### S4 — Accesso e profilo
-- **Specifica**: Accesso con numero di telefono e OTP tramite Supabase Auth, sessione nei cookie, pagine riservate protette. Completamento obbligatorio del profilo con le validazioni di S2, salvato da server action: senza profilo completo e maggiorenne non si prenota.
+- **Specifica**: Accesso con numero di telefono e OTP tramite Supabase Auth, sessione nei cookie, pagine riservate protette. Completamento obbligatorio del profilo con le validazioni di S2, salvato da server action: senza profilo completo e maggiorenne non si prenota. Ogni errore di dominio (`format`, `check_character`, `birth_date_mismatch`, `name_mismatch`, `underage`, `invalid_birth_date`) ha un messaggio in italiano che dice cosa fare.
 - **Uscita** (`npm run test:e2e`, con pulizia dei dati di test a inizio esecuzione): accesso riuscito, codice errato rifiutato, pagine protette inaccessibili senza sessione, profilo rifiutato per minorenne o codice fiscale non valido, profilo valido salvato.
 
 ### S5 — Configurazione superadmin: orario, sport e prezzi

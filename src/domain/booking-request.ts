@@ -43,6 +43,8 @@ export function checkBookingRequest(
   if (Temporal.PlainDate.compare(local.toPlainDate(), lastDay) > 0)
     return err("beyond_horizon");
 
+  // Nel giorno del ritorno all'ora solare la seconda occorrenza dell'ora ripetuta
+  // non è uno slot (D6): risulta fuori orario.
   const slot = computeSlots(request).find((candidate) =>
     candidate.startsAt.equals(request.startsAt),
   );

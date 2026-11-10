@@ -80,8 +80,24 @@ function decodeOmocodia(code: string): string {
   return chars.join("");
 }
 
+/** Lettere che non si scompongono in lettera base + accento. */
+const SPECIAL_LETTERS: Record<string, string> = {
+  Ł: "L",
+  ł: "L",
+  Ø: "O",
+  ø: "O",
+  Đ: "D",
+  đ: "D",
+  ß: "SS",
+  Æ: "AE",
+  æ: "AE",
+  Œ: "OE",
+  œ: "OE",
+};
+
 function lettersOnly(name: string): string {
   return name
+    .replace(/[ŁłØøĐđßÆæŒœ]/g, (char) => SPECIAL_LETTERS[char])
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toUpperCase()

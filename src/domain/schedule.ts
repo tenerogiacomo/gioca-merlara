@@ -133,7 +133,8 @@ export function slotStartsFor(
       starts.push(minute);
     }
   }
-  return starts.sort((a, b) => a - b);
+  // Un orario salvato con intervalli sovrapposti non deve produrre slot doppi.
+  return [...new Set(starts)].sort((a, b) => a - b);
 }
 
 /** Orari aperti in cui uno sport non ha prezzo, per segnalarli nella configurazione. */

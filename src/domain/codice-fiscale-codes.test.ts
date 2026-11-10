@@ -10,6 +10,9 @@ describe("codici di nome e cognome", () => {
     ["Bò", "BOX"],
     ["Ai", "AIX"],
     ["Rè", "REX"],
+    ["Łukasz", "LKS"],
+    ["Strauß", "STR"],
+    ["Østergaard", "STR"],
   ])("cognome %s → %s", (name, code) => {
     expect(lastNameCode(name)).toBe(code);
   });

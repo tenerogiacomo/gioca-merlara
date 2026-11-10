@@ -153,6 +153,27 @@ describe("computeSlots", () => {
     expect(slots.filter((slot) => slot.localDate.dayOfWeek === 3)).toEqual([]);
   });
 
+  test("intervalli sovrapposti salvati per errore non producono slot doppi", () => {
+    const schedule: WeeklySchedule = {
+      ...openNineToEleven,
+      1: [
+        { opens: "09:00", closes: "12:00" },
+        { opens: "11:00", closes: "14:00" },
+      ],
+    };
+    const slots = computeSlots({ ...base, schedule, now: mondayMorning });
+    const monday = slots.filter(
+      (slot) => slot.localDate.toString() === "2026-11-09",
+    );
+    expect(monday.map((slot) => slot.localTime)).toEqual([
+      "09:00",
+      "10:00",
+      "11:00",
+      "12:00",
+      "13:00",
+    ]);
+  });
+
   test("più intervalli nello stesso giorno", () => {
     const schedule: WeeklySchedule = {
       ...openNineToEleven,
