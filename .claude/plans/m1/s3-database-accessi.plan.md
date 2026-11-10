@@ -82,6 +82,7 @@ Configurazione Vitest separata, contro il progetto di sviluppo, con pulizia all'
 ### 3.2 Collegamento della CLI e verifica senza Docker
 - **Azione**: `supabase init` e `supabase link` al progetto; verificare che `migration new`, `db push` e `gen types --linked` funzionino senza Docker. Verificare sulla documentazione attuale se conviene passare alle nuove chiavi `sb_publishable_` / `sb_secret_`.
 - **Verifica**: una migrazione vuota applicata al progetto remoto; esito sulle chiavi annotato nel piano.
+- **Esito (10 novembre 2026)**: con la CLI 3.1 i comandi verso il progetto richiedono `--remote`; `link`, `migration new`, `db push --remote` e `gen types --remote` funzionano senza Docker. Le chiavi classiche `anon` e `service_role` saranno dismesse da Supabase entro la fine del 2026: l'app usa le nuove `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` e `SUPABASE_SECRET_KEY`, già presenti nel progetto e verificate. Le chiavi classiche vanno disattivate dal pannello quando tutto funziona con le nuove (prima del lancio).
 
 ### 3.3 Schema e vincoli
 - **Azione**: migrazione con le tabelle e i vincoli delle specifiche.

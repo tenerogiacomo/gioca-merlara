@@ -27,12 +27,12 @@ npx playwright install chromium
 
 Tutte le variabili sono descritte in [`.env.example`](.env.example). Dal pannello Supabase:
 
-| Variabile                       | Dove si trova                                                                   |
-| ------------------------------- | ------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | Project Settings → Data API → Project URL                                       |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Project Settings → API Keys → `anon` `public`                                   |
-| `SUPABASE_SERVICE_ROLE_KEY`     | Project Settings → API Keys → `service_role` (segreta, solo server)             |
-| `SUPABASE_DB_PASSWORD`          | Scelta alla creazione del progetto; si reimposta da Project Settings → Database |
+| Variabile                              | Dove si trova                                                                   |
+| -------------------------------------- | ------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Project Settings → Data API → Project URL                                       |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Project Settings → API Keys → chiave `publishable` (`sb_publishable_…`)         |
+| `SUPABASE_SECRET_KEY`                  | Project Settings → API Keys → chiave `secret` (`sb_secret_…`, solo server)      |
+| `SUPABASE_DB_PASSWORD`                 | Scelta alla creazione del progetto; si reimposta da Project Settings → Database |
 
 I nomi delle voci del pannello possono cambiare nel tempo. `.env.local` non va mai in git.
 
