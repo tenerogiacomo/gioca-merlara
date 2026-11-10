@@ -95,8 +95,8 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 | S1 | Fondamenta del progetto e `DESIGN.md` | No | No | Scrive `DESIGN.md` con il committente | `m1/s1-fondamenta.plan.md` | complete |
 | S2 | Regole di dominio | No | No | — | `m1/s2-regole-dominio.plan.md` | complete |
 | S3 | Database e regole di accesso | Sì | Sì | — | `m1/s3-database-accessi.plan.md` | complete |
-| S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | `m1/s4-accesso-profilo.plan.md` | in-progress |
-| S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | — | pending |
+| S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | `m1/s4-accesso-profilo.plan.md` | complete |
+| S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | `m1/s5-configurazione-superadmin.plan.md` | in-progress |
 | S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S8 | Rifinitura e consegna | Sì | No | Verifica l'aderenza a `DESIGN.md` | — | pending |
