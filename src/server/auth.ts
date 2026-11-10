@@ -70,10 +70,25 @@ export async function requireProfile(
 
 /**
  * Solo il superadmin. Per tutti gli altri, con o senza accesso, la pagina non esiste (404):
- * così l'area di gestione non si rivela. Vale anche per le server actions.
+ * così l'area di gestione non si rivela.
+ * Con `fresh: true` (per i salvataggi) il ruolo si rilegge dal server di Supabase invece che dal
+ * token: se il ruolo viene tolto, smette di valere subito e non alla scadenza del token.
  */
-export async function requireSuperadmin(): Promise<CurrentUser> {
+export async function requireSuperadmin({
+  fresh = false,
+}: { fresh?: boolean } = {}): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user?.isSuperadmin) notFound();
+  if (fresh) {
+    const supabase = await createSupabaseServerClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (
+      error ||
+      data.user?.id !== user.id ||
+      data.user.app_metadata?.role !== "superadmin"
+    ) {
+      notFound();
+    }
+  }
   return user;
 }

@@ -111,6 +111,7 @@ export async function resetTestData(admin: AdminClient): Promise<number> {
 }
 
 export type ConfigSnapshot = {
+  projectRef: string;
   sports: Database["public"]["Tables"]["sports"]["Row"][];
   intervals: Database["public"]["Tables"]["opening_intervals"]["Row"][];
   rules: Database["public"]["Tables"]["price_rules"]["Row"][];
@@ -128,6 +129,7 @@ export async function snapshotConfig(
   for (const result of [sports, intervals, rules])
     if (result.error) throw result.error;
   return {
+    projectRef: projectRef(),
     sports: sports.data!,
     intervals: intervals.data!,
     rules: rules.data!,
@@ -139,6 +141,15 @@ export async function restoreConfig(
   admin: AdminClient,
   snapshot: ConfigSnapshot,
 ): Promise<void> {
+  requireDevelopmentProject();
+  if (snapshot.projectRef !== projectRef()) {
+    throw new Error(
+      "La fotografia appartiene a un altro progetto: ripristino annullato",
+    );
+  }
+  if (snapshot.sports.length === 0) {
+    throw new Error("Fotografia senza sport: ripristino annullato");
+  }
   const sports = await admin.from("sports").upsert(snapshot.sports);
   if (sports.error) throw sports.error;
   const keep = snapshot.sports.map((sport) => sport.id);

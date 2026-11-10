@@ -32,11 +32,16 @@ export type AdminFormState =
 const SAVE_FAILED =
   "Non siamo riusciti a salvare: riprova tra qualche istante.";
 
+/** Nome di sport valido: da 1 a 60 caratteri, senza caratteri di controllo o invisibili. */
+function isValidSportName(name: string): boolean {
+  return name.length > 0 && name.length <= 60 && !/\p{C}/u.test(name);
+}
+
 export async function saveScheduleAction(
   _state: AdminFormState,
   formData: FormData,
 ): Promise<AdminFormState> {
-  await requireSuperadmin();
+  await requireSuperadmin({ fresh: true });
   const parsed = parseScheduleInput(String(formData.get("schedule") ?? ""));
   if (!parsed.ok)
     return {
@@ -78,11 +83,15 @@ export async function createSportAction(
   _state: AdminFormState,
   formData: FormData,
 ): Promise<AdminFormState> {
-  await requireSuperadmin();
+  await requireSuperadmin({ fresh: true });
   const name = String(formData.get("name") ?? "").trim();
   const id = sportIdFromName(name);
-  if (!name || !id || name.length > 60) {
-    return { errors: ["Scrivi un nome di sport di massimo 60 caratteri."] };
+  if (!id || !isValidSportName(name)) {
+    return {
+      errors: [
+        "Scrivi un nome di sport di massimo 60 caratteri, solo lettere, numeri e segni comuni.",
+      ],
+    };
   }
   const { sports } = await loadConfig();
   if (sports.some((sport) => sport.name.toLowerCase() === name.toLowerCase())) {
@@ -105,13 +114,19 @@ export async function updateSportAction(
   _state: AdminFormState,
   formData: FormData,
 ): Promise<AdminFormState> {
-  await requireSuperadmin();
+  await requireSuperadmin({ fresh: true });
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const sortOrder = Number(formData.get("sortOrder"));
   const active = formData.get("active") === "on";
-  if (!name || name.length > 60)
-    return { errors: ["Il nome deve avere da 1 a 60 caratteri."] };
+  if (!/^[a-z0-9-]{1,40}$/.test(id)) return { errors: [SAVE_FAILED] };
+  if (!isValidSportName(name)) {
+    return {
+      errors: [
+        "Il nome deve avere da 1 a 60 caratteri, solo lettere, numeri e segni comuni.",
+      ],
+    };
+  }
   if (!Number.isInteger(sortOrder) || sortOrder < 0 || sortOrder > 999) {
     return { errors: ["L'ordine deve essere un numero intero da 0 a 999."] };
   }
@@ -120,6 +135,8 @@ export async function updateSportAction(
     .update({ name, sort_order: sortOrder, active })
     .eq("id", id)
     .select("id");
+  if (error?.code === "23505")
+    return { errors: [`Esiste già uno sport chiamato "${name}".`] };
   if (error || data.length === 0) return { errors: [SAVE_FAILED] };
   revalidatePath("/admin", "layout");
   return { ok: "Salvato." };
@@ -130,7 +147,7 @@ export async function savePriceRulesAction(
   _state: AdminFormState,
   formData: FormData,
 ): Promise<AdminFormState> {
-  await requireSuperadmin();
+  await requireSuperadmin({ fresh: true });
   const parsed = parsePriceRulesInput(
     String(formData.get("rules") ?? ""),
     sportId,

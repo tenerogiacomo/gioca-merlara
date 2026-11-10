@@ -160,6 +160,7 @@ Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma 
 - [ ] Protezione dall'abuso degli SMS: captcha (Turnstile o hCaptcha) sull'invio del codice, limiti per indirizzo IP e per numero, tetto di spesa e paesi ammessi presso il provider SMS. L'app accetta già solo numeri italiani.
 - [ ] Limiti di frequenza su accesso con OTP e funzioni del calendario (es. al livello dell'hosting).
 - [ ] Durata del codice SMS nel pannello Supabase ridotta a 5–10 minuti.
+- [ ] Durata del token di accesso (JWT) valutata: le letture usano il ruolo nel token fino alla sua scadenza; i salvataggi del superadmin rileggono già il ruolo dal server.
 - [ ] Provider SMS reale configurato.
 - [ ] Informativa privacy (nome del prenotante visibile agli utenti con profilo), titolare del trattamento.
 - [ ] Autorizzazione del Comune all'uso dello stemma.
