@@ -28,8 +28,20 @@ export function projectRef(): string {
 }
 
 /**
- * Gli script che modificano dati chiedono `--confirm <riferimento del progetto>`,
- * per non lanciarli per sbaglio sul progetto sbagliato.
+ * Gli script che cancellano o sovrascrivono dati girano solo su un progetto dichiarato di sviluppo
+ * (`SUPABASE_PROJECT_ENV=development` in .env.local). Il progetto di produzione non deve averla.
+ */
+export function requireDevelopmentProject(): void {
+  if (process.env.SUPABASE_PROJECT_ENV !== "development") {
+    throw new Error(
+      "Rifiutato: questo script cancella dati e gira solo con SUPABASE_PROJECT_ENV=development",
+    );
+  }
+}
+
+/**
+ * Gli script che modificano dati chiedono anche `--confirm <riferimento del progetto>`,
+ * per rendere esplicito su quale progetto si sta agendo.
  */
 export function requireConfirmation(argv: string[]): void {
   const index = argv.indexOf("--confirm");

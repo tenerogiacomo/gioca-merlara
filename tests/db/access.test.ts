@@ -3,6 +3,7 @@ import {
   assignSuperadmin,
   createAdminClient,
   findUserByPhone,
+  requireDevelopmentProject,
   requireEnv,
   resetTestData,
 } from "../../scripts/lib/admin";
@@ -15,6 +16,8 @@ import {
 
 const admin = createAdminClient();
 const TEST_BLOCK_REASON = "test: blocco di prova";
+// Sport usato solo dai test, per non toccare la configurazione reale.
+const TEST_SPORT = "test-sport";
 const range = { p_from: "2030-06-10T00:00:00Z", p_to: "2030-06-11T00:00:00Z" };
 
 let userA: Client;
@@ -23,11 +26,11 @@ let superadmin: Client;
 let idA: string;
 let idB: string;
 
-function booking(userId: string, hour: number) {
+function booking(userId: string, hour: number, slot = futureSlot(hour)) {
   return {
     user_id: userId,
-    sport_id: "calcetto",
-    ...futureSlot(hour),
+    sport_id: TEST_SPORT,
+    ...slot,
     price_cents: 0,
     autocert_version: "test",
     autocert_accepted_at: new Date().toISOString(),
@@ -41,13 +44,30 @@ async function cleanUp() {
     .delete()
     .eq("reason", TEST_BLOCK_REASON);
   if (blocks.error) throw blocks.error;
+  const sport = await admin.from("sports").delete().eq("id", TEST_SPORT);
+  if (sport.error) throw sport.error;
+}
+
+async function insertProfile(id: string, firstName: string, taxCode: string) {
+  const result = await admin.from("profiles").insert({
+    id,
+    first_name: firstName,
+    last_name: "Prova",
+    birth_date: "1990-01-01",
+    tax_code: taxCode,
+  });
+  if (result.error) throw result.error;
 }
 
 beforeAll(async () => {
+  requireDevelopmentProject();
   await cleanUp();
-  const sport = await admin
-    .from("sports")
-    .upsert({ id: "calcetto", name: "Calcetto", active: true, sort_order: 1 });
+  const sport = await admin.from("sports").insert({
+    id: TEST_SPORT,
+    name: "Sport di prova",
+    active: false,
+    sort_order: 99,
+  });
   if (sport.error) throw sport.error;
 
   // Il ruolo va assegnato prima dell'accesso, perché entra nel token al login.
@@ -60,26 +80,25 @@ beforeAll(async () => {
   idA = (await findUserByPhone(admin, requireEnv("TEST_PHONE_USER_A")))!.id;
   idB = (await findUserByPhone(admin, requireEnv("TEST_PHONE_USER_B")))!.id;
 
-  const profiles = await admin.from("profiles").insert([
-    {
-      id: idA,
-      first_name: "Anna",
-      last_name: "Prova",
-      birth_date: "1990-01-01",
-      tax_code: "PRVNNA90A41A001A",
-    },
-    {
-      id: idB,
-      first_name: "Bruno",
-      last_name: "Prova",
-      birth_date: "1991-02-02",
-      tax_code: "PRVBRN91B02A001B",
-    },
-  ]);
-  if (profiles.error) throw profiles.error;
+  // Solo A ha subito un profilo; quello di B arriva dopo il gruppo 0.
+  await insertProfile(idA, "Anna", "PRVNNA90A41A001A");
 });
 
 afterAll(cleanUp);
+
+describe("0. nomi nel calendario solo a chi ha un profilo", () => {
+  afterAll(() => insertProfile(idB, "Bruno", "PRVBRN90A01A001B"));
+
+  test("un utente con sessione ma senza profilo vede solo gli orari", async () => {
+    const result = await admin.from("bookings").insert(booking(idA, 8));
+    if (result.error) throw result.error;
+    const { data } = await userB.rpc("occupied_slots", range);
+    const slot = data?.find((row) =>
+      row.starts_at.startsWith("2030-06-10T08:00"),
+    );
+    expect(slot).toMatchObject({ sport_id: null, first_name: null });
+  });
+});
 
 describe("1. esclusiva dello slot", () => {
   test("una seconda prenotazione attiva sullo stesso slot viene rifiutata", async () => {
@@ -115,6 +134,11 @@ describe("1. esclusiva dello slot", () => {
       .from("bookings")
       .insert(withoutAutocert as never);
     expect(result.error?.code).toBe("23502");
+  });
+
+  test("un profilo con prenotazioni non si cancella (lo storico resta)", async () => {
+    const result = await admin.from("profiles").delete().eq("id", idA);
+    expect(result.error?.code).toBe("23503");
   });
 });
 
@@ -167,8 +191,8 @@ describe("3. isolamento dei dati personali", () => {
 
   test("un utente vede solo le proprie prenotazioni", async () => {
     const { data } = await userB.from("bookings").select("user_id");
-    expect(data?.every((row) => row.user_id === idB)).toBe(true);
     expect(data?.length).toBeGreaterThan(0);
+    expect(data?.every((row) => row.user_id === idB)).toBe(true);
   });
 
   test("senza sessione non si legge nessuna prenotazione né profilo", async () => {
@@ -184,11 +208,18 @@ describe("3. isolamento dei dati personali", () => {
 
 describe("4. calendario: solo i dati previsti", () => {
   beforeAll(async () => {
-    const result = await admin.from("blocks").insert({
-      ...futureSlot(15),
-      reason: TEST_BLOCK_REASON,
-    });
-    if (result.error) throw result.error;
+    const block = await admin
+      .from("blocks")
+      .insert({ ...futureSlot(15), reason: TEST_BLOCK_REASON });
+    if (block.error) throw block.error;
+    // Prenotazione già finita: il suo nome non deve comparire.
+    const past = await admin.from("bookings").insert(
+      booking(idA, 10, {
+        starts_at: "2020-06-10T10:00:00.000Z",
+        ends_at: "2020-06-10T11:00:00.000Z",
+      }),
+    );
+    if (past.error) throw past.error;
   });
 
   test("senza sessione gli slot occupati mostrano solo l'orario", async () => {
@@ -209,16 +240,30 @@ describe("4. calendario: solo i dati previsti", () => {
     }
   });
 
-  test("con sessione si vedono anche nome e sport, mai altro", async () => {
+  test("con profilo si vedono anche nome e sport, mai altro", async () => {
     const { data } = await userB.rpc("occupied_slots", range);
     const slotOfA = data?.find((row) =>
       row.starts_at.startsWith("2030-06-10T12:00"),
     );
     expect(slotOfA).toEqual({
       starts_at: expect.any(String),
-      sport_id: "calcetto",
+      sport_id: TEST_SPORT,
       first_name: "Anna",
     });
+  });
+
+  test("di una prenotazione già finita si vede solo l'orario", async () => {
+    const { data } = await userB.rpc("occupied_slots", {
+      p_from: "2020-06-10T00:00:00Z",
+      p_to: "2020-06-11T00:00:00Z",
+    });
+    expect(data).toEqual([
+      {
+        starts_at: expect.stringMatching(/^2020-06-10T10:00/),
+        sport_id: null,
+        first_name: null,
+      },
+    ]);
   });
 
   test("i blocchi mostrano solo inizio e fine", async () => {
@@ -278,6 +323,14 @@ describe("6. il superadmin legge tutto", () => {
     expect(blocks.data?.length).toBe(1);
   });
 
+  test("vede i nomi nel calendario anche senza un profilo proprio", async () => {
+    const { data } = await superadmin.rpc("occupied_slots", range);
+    const slotOfA = data?.find((row) =>
+      row.starts_at.startsWith("2030-06-10T12:00"),
+    );
+    expect(slotOfA?.first_name).toBe("Anna");
+  });
+
   test("anche il superadmin non scrive direttamente", async () => {
     const result = await superadmin
       .from("sports")
@@ -297,8 +350,29 @@ describe("7. configurazione pubblica", () => {
       const { error } = await anonymous.from(table).select("*").limit(1);
       expect(error).toBeNull();
     }
-    expect(
-      (await anonymous.from("sports").select("id").eq("id", "calcetto")).data,
-    ).toEqual([{ id: "calcetto" }]);
+    const { data } = await anonymous
+      .from("sports")
+      .select("id")
+      .eq("id", TEST_SPORT);
+    expect(data).toEqual([{ id: TEST_SPORT }]);
+  });
+});
+
+describe("8. superfici non usate chiuse", () => {
+  test("l'endpoint GraphQL non espone lo schema", async () => {
+    const response = await fetch(
+      `${requireEnv("NEXT_PUBLIC_SUPABASE_URL")}/graphql/v1`,
+      {
+        method: "POST",
+        headers: {
+          apikey: requireEnv("NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: "{ __schema { types { name } } }" }),
+      },
+    );
+    const body = await response.text();
+    expect(body).not.toContain("bookings");
+    expect(body).not.toContain("profiles");
   });
 });

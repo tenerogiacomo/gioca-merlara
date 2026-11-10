@@ -1,10 +1,15 @@
 /**
  * Dati di esempio per lo sviluppo: orario 9–23 tutti i giorni, tre sport e prezzi FINTI.
- * Sostituisce ogni volta orario e prezzi (ripetibile, senza duplicati).
+ * Sostituisce orario e prezzi (ripetibile, senza duplicati). Se esistono già prezzi
+ * si ferma, a meno di `--force`, per non cancellare una configurazione reale.
  * I valori reali li configura il superadmin (step S5).
- * Uso: npm run db:seed -- --confirm <riferimento progetto>
+ * Uso: npm run db:seed -- --confirm <riferimento progetto> [--force]
  */
-import { createAdminClient, requireConfirmation } from "./lib/admin";
+import {
+  createAdminClient,
+  requireConfirmation,
+  requireDevelopmentProject,
+} from "./lib/admin";
 
 const admin = createAdminClient();
 
@@ -19,7 +24,18 @@ const examplePrices = {
 };
 
 async function run() {
-  requireConfirmation(process.argv.slice(2));
+  const args = process.argv.slice(2);
+  requireDevelopmentProject();
+  requireConfirmation(args);
+  const existing = await admin
+    .from("price_rules")
+    .select("id", { count: "exact", head: true });
+  if (existing.error) throw existing.error;
+  if ((existing.count ?? 0) > 0 && !args.includes("--force")) {
+    throw new Error(
+      `Ci sono già ${existing.count} regole di prezzo: aggiungi --force per sostituirle con quelle di esempio`,
+    );
+  }
   const sports = await admin.from("sports").upsert([
     { id: "calcetto", name: "Calcetto", active: true, sort_order: 1 },
     { id: "tennis", name: "Tennis", active: true, sort_order: 2 },

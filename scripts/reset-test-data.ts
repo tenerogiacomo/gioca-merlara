@@ -5,10 +5,12 @@
 import {
   createAdminClient,
   requireConfirmation,
+  requireDevelopmentProject,
   resetTestData,
 } from "./lib/admin";
 
 async function run() {
+  requireDevelopmentProject();
   requireConfirmation(process.argv.slice(2));
   const count = await resetTestData(createAdminClient());
   console.log(`Dati di prova ripuliti per ${count} utenti.`);
