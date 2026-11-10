@@ -6,4 +6,3 @@ playwright-report/
 package-lock.json
 .claude/
 supabase/.temp/
-src/types/database.ts
