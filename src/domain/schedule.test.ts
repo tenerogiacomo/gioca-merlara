@@ -149,6 +149,104 @@ describe("validatePriceRules", () => {
   });
 });
 
+describe("validatePriceRules: fasce gratuite", () => {
+  test("rifiuta una fascia gratuita per uno sport e a pagamento per un altro nello stesso orario", () => {
+    expect(
+      validatePriceRules(
+        [
+          {
+            sportId: "calcetto",
+            weekdays: [1],
+            from: "15:00",
+            to: "17:00",
+            priceCents: 0,
+          },
+          {
+            sportId: "tennis",
+            weekdays: [1, 2],
+            from: "16:00",
+            to: "18:00",
+            priceCents: 1500,
+          },
+        ],
+        sports,
+      ),
+    ).toEqual([{ index: 1, code: "mixed_free_paid" }]);
+  });
+
+  test("ammette la stessa fascia gratuita per tutti gli sport", () => {
+    expect(
+      validatePriceRules(
+        [
+          {
+            sportId: "calcetto",
+            weekdays: [1],
+            from: "15:00",
+            to: "17:00",
+            priceCents: 0,
+          },
+          {
+            sportId: "tennis",
+            weekdays: [1],
+            from: "15:00",
+            to: "17:00",
+            priceCents: 0,
+          },
+        ],
+        sports,
+      ),
+    ).toEqual([]);
+  });
+
+  test("ammette prezzi diversi a pagamento nello stesso orario", () => {
+    expect(
+      validatePriceRules(
+        [
+          {
+            sportId: "calcetto",
+            weekdays: [1],
+            from: "17:00",
+            to: "19:00",
+            priceCents: 5000,
+          },
+          {
+            sportId: "tennis",
+            weekdays: [1],
+            from: "17:00",
+            to: "19:00",
+            priceCents: 2000,
+          },
+        ],
+        sports,
+      ),
+    ).toEqual([]);
+  });
+
+  test("ammette gratis e a pagamento in giorni diversi", () => {
+    expect(
+      validatePriceRules(
+        [
+          {
+            sportId: "calcetto",
+            weekdays: [1],
+            from: "15:00",
+            to: "17:00",
+            priceCents: 0,
+          },
+          {
+            sportId: "tennis",
+            weekdays: [6],
+            from: "15:00",
+            to: "17:00",
+            priceCents: 2000,
+          },
+        ],
+        sports,
+      ),
+    ).toEqual([]);
+  });
+});
+
 describe("findUncoveredSlots", () => {
   test("nessun orario scoperto con le regole di esempio per il calcetto", () => {
     expect(

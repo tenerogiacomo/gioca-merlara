@@ -6,12 +6,22 @@ import { getCurrentUser } from "@/server/auth";
 async function AccountLink() {
   const user = await getCurrentUser();
   return user ? (
-    <Link
-      href="/profilo"
-      className="font-semibold text-primary hover:underline"
-    >
-      Il mio profilo
-    </Link>
+    <div className="flex gap-4">
+      {user.isSuperadmin && (
+        <Link
+          href="/admin"
+          className="font-semibold text-primary hover:underline"
+        >
+          Gestione
+        </Link>
+      )}
+      <Link
+        href="/profilo"
+        className="font-semibold text-primary hover:underline"
+      >
+        Il mio profilo
+      </Link>
+    </div>
   ) : (
     <Link href="/accedi" className="font-semibold text-primary hover:underline">
       Accedi
