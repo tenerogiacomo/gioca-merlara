@@ -33,29 +33,54 @@ Tutte le variabili sono descritte in [`.env.example`](.env.example). Dal pannell
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Project Settings → API Keys → chiave `publishable` (`sb_publishable_…`)         |
 | `SUPABASE_SECRET_KEY`                  | Project Settings → API Keys → chiave `secret` (`sb_secret_…`, solo server)      |
 | `SUPABASE_DB_PASSWORD`                 | Scelta alla creazione del progetto; si reimposta da Project Settings → Database |
+| `TEST_PHONE_*`, `TEST_OTP_*`           | Authentication → Sign In / Providers → Phone → Test Phone Numbers and OTPs      |
 
 I nomi delle voci del pannello possono cambiare nel tempo. `.env.local` non va mai in git.
 
 ## Comandi
 
-| Comando                                   | Cosa fa                                                                  |
-| ----------------------------------------- | ------------------------------------------------------------------------ |
-| `npm run dev`                             | Server di sviluppo                                                       |
-| `npm run build`                           | Build di produzione                                                      |
-| `npm run lint`                            | ESLint                                                                   |
-| `npm run format` / `npm run format:check` | Formatta / verifica la formattazione con Prettier                        |
-| `npm run typecheck`                       | Genera i tipi delle route e verifica TypeScript                          |
-| `npm test`                                | Test unitari con Vitest, senza rete; girano anche su GitHub              |
-| `npm run test:watch`                      | Test unitari in modalità watch                                           |
-| `npm run test:e2e`                        | Test end-to-end con Playwright su viewport da smartphone; solo in locale |
+| Comando                                   | Cosa fa                                                                               |
+| ----------------------------------------- | ------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Server di sviluppo                                                                    |
+| `npm run build`                           | Build di produzione                                                                   |
+| `npm run lint`                            | ESLint                                                                                |
+| `npm run format` / `npm run format:check` | Formatta / verifica la formattazione con Prettier                                     |
+| `npm run typecheck`                       | Genera i tipi delle route e verifica TypeScript                                       |
+| `npm test`                                | Test unitari con Vitest, senza rete; girano anche su GitHub                           |
+| `npm run test:watch`                      | Test unitari in modalità watch                                                        |
+| `npm run test:e2e`                        | Test end-to-end con Playwright su viewport da smartphone; solo in locale              |
+| `npm run test:db`                         | Test di vincoli e regole di accesso sul progetto Supabase di sviluppo; solo in locale |
 
 A ogni pull request GitHub Actions esegue lint, formattazione, typecheck e test unitari.
+
+## Database (Supabase)
+
+Il database vive nel progetto Supabase; la sua struttura è descritta dai file in `supabase/migrations/`, versionati in git. Docker non serve: tutti i comandi lavorano sul progetto remoto. La prima volta: `npx supabase login` (da un terminale normale, apre il browser) e `npx supabase link --project-ref <riferimento>`.
+
+| Comando                                                | Cosa fa                                                                                                     |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `npm run db:push`                                      | Applica al progetto le migrazioni nuove                                                                     |
+| `npm run db:types`                                     | Rigenera `src/types/database.ts` dallo schema del progetto                                                  |
+| `npm run db:seed -- --confirm <rif>`                   | Carica i dati di esempio: orario 9–23, 3 sport, **prezzi finti**                                            |
+| `npm run admin:superadmin -- [numero] --confirm <rif>` | Dà il ruolo superadmin a un utente (senza numero: `TEST_PHONE_SUPERADMIN`); vale dal suo accesso successivo |
+| `npm run db:reset-test -- --confirm <rif>`             | Cancella prenotazioni e profili dei soli utenti di prova                                                    |
+
+`<rif>` è il riferimento del progetto, la parte iniziale dell'URL (`https://<rif>.supabase.co`): gli script che modificano dati lo chiedono per evitare di agire sul progetto sbagliato.
+
+**Regole di accesso, in breve**: gli utenti possono solo leggere, e solo i propri dati; il superadmin legge tutto. Ogni scrittura passa dal server con la chiave secret, dopo i controlli. Il calendario vede gli slot occupati come orari; chi ha fatto l'accesso vede anche nome del prenotante e sport. Per cambiare lo schema si aggiunge una nuova migrazione, mai si modifica una già applicata.
 
 ## Struttura
 
 ```
 src/app/          pagine e layout (Next.js App Router)
 src/components/ui componenti di interfaccia di base
+src/domain/       regole di dominio pure (slot, prezzi, codice fiscale, età)
+src/lib/supabase/ client Supabase (server, browser, servizio solo server)
+src/server/db/    conversioni tra database e dominio
+src/proxy.ts      aggiornamento della sessione a ogni richiesta
+supabase/         configurazione e migrazioni del database
+scripts/          script operativi (superadmin, dati di esempio, pulizia)
+tests/db/         test sul database di sviluppo
 e2e/              test end-to-end Playwright
 .claude/          PRD, piani e configurazione degli strumenti di sviluppo
 DESIGN.md         regole di stile dell'interfaccia
