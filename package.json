@@ -17,7 +17,8 @@
   "dependencies": {
     "next": "16.4.5",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "temporal-polyfill": "1.0.8"
   },
   "devDependencies": {
     "@playwright/test": "1.64.1",
