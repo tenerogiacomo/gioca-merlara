@@ -47,7 +47,7 @@ Repository greenfield: contiene solo `README.md`, `LICENSE`, `.gitignore` ed `.e
 - **Slot**: 60 minuti, orizzonte di 14 giorni. Nella milestone 1 sono costanti di configurazione nel codice: cambiarle richiede un rilascio. Cambiare la durata con prenotazioni future già presenti non è supportato.
 - **Esclusiva**: uno slot ha al massimo una prenotazione attiva, garantito dal database e non solo dal codice.
 - **Disponibilità**: uno slot è prenotabile se rientra nell'orario di apertura, non è bloccato, non è passato, è dentro l'orizzonte e non è già prenotato.
-- **Prezzo**: per fascia, zero compreso. In questa milestone viene solo mostrato; nessun incasso.
+- **Prezzo**: per sport, giorno e fascia oraria, zero compreso; chi prenota indica lo sport. In questa milestone viene solo mostrato; nessun incasso.
 - **Profilo**: nome, cognome, data di nascita, codice fiscale e telefono verificato. Solo maggiorenni. Codice fiscale validato nel formato e nel carattere di controllo.
 - **Autocertificazione**: accettata a ogni prenotazione; versione del testo e momento dell'accettazione si salvano nella riga stessa della prenotazione, così non può esistere una prenotazione senza accettazione.
 - **Nessun limite** di prenotazioni per utente.
@@ -92,11 +92,11 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 
 | Step | Contenuto | Richiede Task 0 | Revisione di sicurezza | Look and feel | Sotto-piano | Stato |
 |---|---|---|---|---|---|---|
-| S1 | Fondamenta del progetto e `DESIGN.md` | No | No | Scrive `DESIGN.md` con il committente | `m1/s1-fondamenta.plan.md` | in-progress |
-| S2 | Regole di dominio | No | No | — | — | pending |
+| S1 | Fondamenta del progetto e `DESIGN.md` | No | No | Scrive `DESIGN.md` con il committente | `m1/s1-fondamenta.plan.md` | complete |
+| S2 | Regole di dominio | No | No | — | `m1/s2-regole-dominio.plan.md` | in-progress |
 | S3 | Database e regole di accesso | Sì | Sì | — | — | pending |
 | S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | — | pending |
-| S5 | Configurazione superadmin: orario e prezzi | Sì | Sì | Segue `DESIGN.md` | — | pending |
+| S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | — | pending |
 | S8 | Rifinitura e consegna | Sì | No | Verifica l'aderenza a `DESIGN.md` | — | pending |
@@ -136,12 +136,12 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
 - **Specifica**: Accesso con numero di telefono e OTP tramite Supabase Auth, sessione nei cookie, pagine riservate protette. Completamento obbligatorio del profilo con le validazioni di S2, salvato da server action: senza profilo completo e maggiorenne non si prenota.
 - **Uscita** (`npm run test:e2e`, con pulizia dei dati di test a inizio esecuzione): accesso riuscito, codice errato rifiutato, pagine protette inaccessibili senza sessione, profilo rifiutato per minorenne o codice fiscale non valido, profilo valido salvato.
 
-### S5 — Configurazione superadmin: orario e prezzi
-- **Specifica**: Area riservata al ruolo superadmin. Configurazione dell'orario settimanale di apertura e dei prezzi per fascia, zero compreso.
+### S5 — Configurazione superadmin: orario, sport e prezzi
+- **Specifica**: Area riservata al ruolo superadmin. Configurazione dell'orario settimanale di apertura, dell'elenco degli sport e dei prezzi per sport e fascia, zero compreso; segnalazione degli orari scoperti per ogni sport.
 - **Uscita**: test end-to-end: un utente normale non apre l'area; il superadmin modifica orario e prezzi e la modifica è visibile ricaricando la pagina.
 
 ### S6 — Prenotazione e annullo dell'utente
-- **Specifica**: Calendario per giorno con stato e prezzo degli slot, calcolati con le funzioni di S2 sui dati configurati in S5. Prenotazione da server action, che verifica disponibilità e profilo e salva l'accettazione dell'autocertificazione versionata nella stessa riga. Messaggio chiaro se lo slot viene preso nel frattempo. Elenco delle proprie prenotazioni e annullo sempre consentito (il voucher arriva con la milestone 2).
+- **Specifica**: Calendario per giorno con stato degli slot e prezzi per sport; chi prenota sceglie lo sport, calcolati con le funzioni di S2 sui dati configurati in S5. Prenotazione da server action, che verifica disponibilità e profilo e salva l'accettazione dell'autocertificazione versionata nella stessa riga. Messaggio chiaro se lo slot viene preso nel frattempo. Elenco delle proprie prenotazioni e annullo sempre consentito (il voucher arriva con la milestone 2).
 - **Uscita**: con gli utenti A e B, due prenotazioni simultanee dello stesso slot: una sola riesce. Test end-to-end: dall'accesso alla prenotazione confermata, poi annullo e slot di nuovo libero.
 
 ### S7 — Blocchi, elenco prenotazioni e annulli d'ufficio

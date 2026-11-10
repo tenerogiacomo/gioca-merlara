@@ -33,7 +33,7 @@ Il servizio è costruito su misura, non adottato da un SaaS di prenotazione esis
 
 **MVP** — Servizio web ottimizzato per smartphone che comprende:
 - **Profilo personale obbligatorio**: anagrafica completa (nome, cognome, data di nascita, codice fiscale) + numero di telefono verificato via OTP. Nessun caricamento di documenti: un upload che nessuno verifica non aggiunge garanzie e appesantisce la privacy; un'eventuale identità più forte è demandata ai legali.
-- **Prenotazione online con calendario delle disponibilità**: la struttura si prenota sempre in esclusiva; slot da 60 minuti e orizzonte di ~14 giorni (valori di default, da tarare); orario settimanale di apertura di default gestito dal superadmin; prezzo configurabile per fascia, zero compreso (le fasce gratuite sono fasce a prezzo 0, stessa meccanica); nessun limite di prenotazioni per utente.
+- **Prenotazione online con calendario delle disponibilità**: la struttura si prenota sempre in esclusiva; slot da 60 minuti e orizzonte di ~14 giorni (valori di default, da tarare); orario settimanale di apertura di default gestito dal superadmin (al lancio orario continuato 9–23, da confermare con l'amministrazione); chi prenota indica lo **sport** (es. calcetto, tennis, basket), perché il prezzo dello slot dipende dallo sport oltre che da giorno e fascia oraria; prezzi configurabili per sport e fascia, zero compreso (le fasce gratuite sono fasce a prezzo 0, stessa meccanica); indicazioni iniziali del committente: una fascia gratuita per i ragazzi nei giorni feriali (indicativamente 15–17, sempre previa prenotazione), sabato e domenica sempre a pagamento; nessun limite di prenotazioni per utente. Uno slot è prenotabile fino al suo inizio; la prenotazione "al volo" di uno slot libero già iniziato è da valutare dopo il lancio.
 - **Autocertificazione di responsabilità** accettata nel flusso da un maggiorenne: danni alla struttura, infortuni, impegno a richiudere i lucchetti a fine slot.
 - **Pagamento digitale** come modalità principale, a favore di NEOS APS (PSP da selezionare tra Stripe, Satispay, PayPal). In alternativa **contanti presso l'esercizio convenzionato**: il cliente salda entro il giorno dello slot comunicando il proprio nome; il gestore annota nome e importo; NEOS riconcilia per nome e sospende i profili con slot goduti e mai pagati.
 - **Voucher**: l'annullo è sempre possibile e genera sempre un voucher (credito a portafoglio, senza scadenza, spendibile sulle fasce a pagamento), anche a ridosso dello slot; raccomandazione di cortesia: disdire entro 24 ore. Nessun voucher per contanti mai versati (la prenotazione decade). L'annullo d'ufficio del superadmin genera sempre voucher.
@@ -46,7 +46,7 @@ Il servizio è costruito su misura, non adottato da un SaaS di prenotazione esis
 - Abbonamenti e prenotazioni ricorrenti — non previsti
 - Gestione di altre strutture comunali — esclusa
 - Tornei ed eventi — esclusi
-- Definizione delle tariffe — la piattaforma supporta prezzi per fascia (zero compreso); importi e regole arrivano da NEOS/Comune
+- Definizione delle tariffe — la piattaforma supporta prezzi per sport e fascia (zero compreso); importi e regole arrivano da NEOS/Comune
 - Integrazione con l'esercizio commerciale — il gestore non ha alcun accesso alla piattaforma: incassa e annota il nome
 - Keybox e consegna di chiavi — superate dalla scelta keyless
 - Rilevazione automatica dei no-show — non osservabile coi lucchetti offline; rivalutare dopo il primo periodo
@@ -58,7 +58,7 @@ Il servizio è costruito su misura, non adottato da un SaaS di prenotazione esis
 
 | # | Milestone | Risultato | Stato | Piano |
 |---|---|---|---|---|
-| 1 | Prenotazione regolamentata | Le persone creano il profilo (anagrafica + OTP), vedono le disponibilità, prenotano e accettano l'autocertificazione; il superadmin gestisce orario di default, prezzi per fascia, blocchi e annulli | in-progress | `.claude/plans/prenotazione-regolamentata.plan.md` |
+| 1 | Prenotazione regolamentata | Le persone creano il profilo (anagrafica + OTP), vedono le disponibilità, prenotano e accettano l'autocertificazione; il superadmin gestisce orario di default, sport, prezzi per sport e fascia, blocchi e annulli | in-progress | `.claude/plans/prenotazione-regolamentata.plan.md` |
 | 2 | Pagamento | Le persone pagano online a NEOS APS o in contanti in esercizio (nome + saldo entro il giorno dello slot, riconciliazione per nome); annulli con voucher a portafoglio | pending | — |
 | 3 | Accesso autonomo | Le persone aprono i due lucchetti smart coi PIN della prenotazione e richiudono a fine slot, senza personale; sopralluogo, installazione, reperibile e manutenzione attivi | pending | — |
 
@@ -72,8 +72,9 @@ Ogni domanda ha un proprietario. Nessuna scadenza, per scelta del committente; i
 - [ ] **Segreteria comunale**: è richiesta una verifica di identità o residenza? (rilevante solo se la struttura tariffaria distinguerà i residenti)
 - [ ] **Curatore**: come si registrano i visitatori senza codice fiscale (es. stranieri), visto che il profilo lo richiede?
 - [ ] **Curatore**: l'annullo di una fascia gratuita genera qualcosa, visto che il voucher vale solo sulle fasce a pagamento?
-- [ ] **Curatore**: orario settimanale di default e periodi di indisponibilità; sopralluogo tecnico — punti di montaggio dei due lucchetti, compatibilità dei varchi, esistenza di chiavi di servizio (bagni, quadro luci): se esistono, restano in un box aperto interno
-- [ ] **Direttivo NEOS**: accordo formale col Comune per gestione e incassi, comprensivo dell'autorizzazione a usare lo stemma comunale (ed eventuale file ufficiale); struttura tariffaria (quali fasce gratuite, quali importi); titolare del trattamento dei dati personali; rotazione del reperibile
+- [ ] **Curatore**: la fascia gratuita "per i ragazzi" è riservata a loro o aperta a tutti? Se è riservata, come si concilia con la regola che al lancio prenota solo un maggiorenne?
+- [ ] **Curatore**: orario settimanale di default (al lancio 9–23, da confermare con l'amministrazione) e periodi di indisponibilità; sopralluogo tecnico — punti di montaggio dei due lucchetti, compatibilità dei varchi, esistenza di chiavi di servizio (bagni, quadro luci): se esistono, restano in un box aperto interno
+- [ ] **Direttivo NEOS**: accordo formale col Comune per gestione e incassi, comprensivo dell'autorizzazione a usare lo stemma comunale (ed eventuale file ufficiale); struttura tariffaria (elenco degli sport, importi per sport e fascia, orario della fascia gratuita); titolare del trattamento dei dati personali; rotazione del reperibile
 - [ ] **Sviluppo**: scelta del PSP (Stripe / Satispay / PayPal); provider email e SMS (es. Twilio per gli SMS); dettagli di integrazione dell'API igloohome (algoPIN, massimo 199 PIN attivi per lucchetto, PIN non revocabili da remoto). Verificare se il limite di 199 PIN attivi conta i PIN già generati per l'intero orizzonte di prenotazione: con slot da 60 minuti e orizzonte di 14 giorni, un orario di apertura di 14 ore al giorno arriva a 196 PIN
 
 ## Rischi
