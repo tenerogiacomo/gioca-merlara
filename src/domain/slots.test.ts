@@ -14,11 +14,15 @@ const base = {
   sports,
   priceRules,
   blocks: [],
-  bookedStarts: [],
+  bookedPeriods: [],
 };
 
 // Lunedì 9 novembre 2026, ore 8:00 a Roma.
 const mondayMorning = rome("2026-11-09T08:00");
+
+function period(from: string, to: string) {
+  return { startsAt: rome(from), endsAt: rome(to) };
+}
 
 function find(slots: Slot[], isoLocal: string) {
   const at = rome(isoLocal);
@@ -84,11 +88,24 @@ describe("computeSlots", () => {
   test("uno slot prenotato è occupato", () => {
     const slots = computeSlots({
       ...base,
-      bookedStarts: [rome("2026-11-10T18:00")],
+      bookedPeriods: [period("2026-11-10T18:00", "2026-11-10T19:00")],
       now: mondayMorning,
     });
     expect(find(slots, "2026-11-10T18:00")?.status).toBe("booked");
     expect(find(slots, "2026-11-10T19:00")?.status).toBe("available");
+  });
+
+  test("una prenotazione di più ore occupa tutti i suoi slot", () => {
+    const slots = computeSlots({
+      ...base,
+      bookedPeriods: [period("2026-11-10T18:00", "2026-11-10T21:00")],
+      now: mondayMorning,
+    });
+    expect(find(slots, "2026-11-10T17:00")?.status).toBe("available");
+    expect(find(slots, "2026-11-10T18:00")?.status).toBe("booked");
+    expect(find(slots, "2026-11-10T19:00")?.status).toBe("booked");
+    expect(find(slots, "2026-11-10T20:00")?.status).toBe("booked");
+    expect(find(slots, "2026-11-10T21:00")?.status).toBe("available");
   });
 
   test("un blocco su una fascia rende bloccati gli slot che tocca, anche in parte", () => {
@@ -134,11 +151,7 @@ describe("computeSlots", () => {
           endsAt: rome("2026-11-09T11:00"),
         },
       ],
-      bookedStarts: [
-        rome("2026-11-09T09:00"),
-        rome("2026-11-09T10:00"),
-        rome("2026-11-09T11:00"),
-      ],
+      bookedPeriods: [period("2026-11-09T09:00", "2026-11-09T12:00")],
       now: rome("2026-11-09T09:30"),
     });
     expect(find(slots, "2026-11-09T09:00")?.status).toBe("past");

@@ -4,6 +4,7 @@ import { priceFor, slotStartsFor } from "./schedule";
 import { formatLocalTime, romeLocalToInstant, toRome } from "./time";
 import type {
   Block,
+  Period,
   PriceRule,
   Slot,
   SlotStatus,
@@ -17,17 +18,14 @@ export type SlotContext = {
   sports: Sport[];
   priceRules: PriceRule[];
   blocks: Block[];
-  /** Inizi degli slot con una prenotazione attiva. */
-  bookedStarts: Temporal.Instant[];
+  /** Periodi delle prenotazioni attive (anche di più ore). */
+  bookedPeriods: Period[];
   now: Temporal.Instant;
 };
 
 /** Slot dell'orizzonte (da oggi a oggi + 13 giorni, ora di Roma) con stato e prezzi per sport. */
 export function computeSlots(context: SlotContext): Slot[] {
   const today = toRome(context.now).toPlainDate();
-  const booked = new Set(
-    context.bookedStarts.map((instant) => instant.epochMilliseconds),
-  );
   const slots: Slot[] = [];
 
   for (let offset = 0; offset < HORIZON_DAYS; offset++) {
@@ -55,7 +53,7 @@ export function computeSlots(context: SlotContext): Slot[] {
         endsAt,
         localDate,
         localTime: formatLocalTime(startMinutes),
-        status: statusOf({ startsAt, endsAt, prices }, context, booked),
+        status: statusOf({ startsAt, endsAt, prices }, context),
         prices,
       });
     }
@@ -63,19 +61,18 @@ export function computeSlots(context: SlotContext): Slot[] {
   return slots;
 }
 
+const overlaps = (a: Period, b: Period) =>
+  Temporal.Instant.compare(a.startsAt, b.endsAt) < 0 &&
+  Temporal.Instant.compare(b.startsAt, a.endsAt) < 0;
+
 function statusOf(
   slot: Pick<Slot, "startsAt" | "endsAt" | "prices">,
   context: SlotContext,
-  booked: Set<number>,
 ): SlotStatus {
   if (Temporal.Instant.compare(context.now, slot.startsAt) >= 0) return "past";
-  const blocked = context.blocks.some(
-    (block) =>
-      Temporal.Instant.compare(block.startsAt, slot.endsAt) < 0 &&
-      Temporal.Instant.compare(slot.startsAt, block.endsAt) < 0,
-  );
-  if (blocked) return "blocked";
-  if (booked.has(slot.startsAt.epochMilliseconds)) return "booked";
+  if (context.blocks.some((block) => overlaps(block, slot))) return "blocked";
+  if (context.bookedPeriods.some((booking) => overlaps(booking, slot)))
+    return "booked";
   if (Object.keys(slot.prices).length === 0) return "unpriced";
   return "available";
 }
