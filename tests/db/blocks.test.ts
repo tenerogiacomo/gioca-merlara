@@ -92,7 +92,7 @@ describe("1. blocco con annullo delle prenotazioni coinvolte", () => {
 
   test("un blocco non allineato alle mezz'ore viene rifiutato", async () => {
     const { error } = await createBlock(at(3, 11, 15), at(3, 12));
-    expect(error).not.toBeNull();
+    expect(error?.message).toContain("block_not_aligned");
   });
 
   test("con prenotazioni non confermate non salva nulla e le elenca", async () => {
@@ -215,11 +215,15 @@ describe("2. eliminazione dallo storico", () => {
     pastIds = [one.id!, two.id!];
   });
 
-  test("un elenco diverso dalle prenotazioni del periodo non elimina nulla", async () => {
+  test("un elenco con prenotazioni fuori dal periodo non elimina nulla", async () => {
+    const outside = await insertBooking(
+      "2021-02-10T10:00:00Z",
+      "2021-02-10T11:00:00Z",
+    );
     const { error } = await admin.rpc("delete_bookings", {
       p_from: from,
       p_to: to,
-      p_ids: [pastIds[0]],
+      p_ids: [pastIds[0], outside.id!],
     });
     expect(error?.message).toContain("export_outdated");
     const rows = await admin.from("bookings").select("id").in("id", pastIds);

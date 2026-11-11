@@ -60,7 +60,7 @@ export async function createBlockAction(
   const confirmedIds = String(formData.get("confirmedIds") ?? "")
     .split(",")
     .filter(Boolean);
-  if (confirmedIds.some((id) => !UUID.test(id)))
+  if (confirmedIds.length > 500 || confirmedIds.some((id) => !UUID.test(id)))
     return { errors: [SAVE_FAILED] };
 
   const { startsAt, endsAt } = period.value;
