@@ -3,29 +3,31 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/server/auth";
 
-async function AccountLink() {
+const linkClass = "font-semibold text-primary hover:underline";
+
+async function AccountLinks() {
   const user = await getCurrentUser();
-  return user ? (
-    <div className="flex gap-4">
+  if (!user) {
+    return (
+      <Link href="/accedi" className={linkClass}>
+        Accedi
+      </Link>
+    );
+  }
+  return (
+    <>
+      <Link href="/prenotazioni" className={linkClass}>
+        Prenotazioni
+      </Link>
       {user.isSuperadmin && (
-        <Link
-          href="/admin"
-          className="font-semibold text-primary hover:underline"
-        >
+        <Link href="/admin" className={linkClass}>
           Gestione
         </Link>
       )}
-      <Link
-        href="/profilo"
-        className="font-semibold text-primary hover:underline"
-      >
-        Il mio profilo
+      <Link href="/profilo" className={linkClass}>
+        Profilo
       </Link>
-    </div>
-  ) : (
-    <Link href="/accedi" className="font-semibold text-primary hover:underline">
-      Accedi
-    </Link>
+    </>
   );
 }
 
@@ -43,9 +45,17 @@ export function SiteHeader() {
             priority
           />
         </Link>
-        <Suspense fallback={null}>
-          <AccountLink />
-        </Suspense>
+        <nav
+          aria-label="Principale"
+          className="flex flex-wrap justify-end gap-x-4 gap-y-1"
+        >
+          <Link href="/prenota" className={linkClass}>
+            Prenota
+          </Link>
+          <Suspense fallback={null}>
+            <AccountLinks />
+          </Suspense>
+        </nav>
       </div>
     </header>
   );

@@ -25,8 +25,8 @@ export async function signedInClient(
   for (let attempt = 1; ; attempt++) {
     const sent = await client.auth.signInWithOtp({ phone });
     if (!sent.error) break;
-    if (attempt >= 4 || sent.error.status !== 429) throw sent.error;
-    await new Promise((resolve) => setTimeout(resolve, 3_000));
+    if (attempt >= 6 || sent.error.status !== 429) throw sent.error;
+    await new Promise((resolve) => setTimeout(resolve, 10_000));
   }
   const verified = await client.auth.verifyOtp({
     phone,
