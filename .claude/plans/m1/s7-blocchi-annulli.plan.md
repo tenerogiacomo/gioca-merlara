@@ -103,5 +103,11 @@ Tutte chiamano `requireSuperadmin({ fresh: true })`, validano l'input con zod e 
 | Blocco lungo per errore (es. anno sbagliato) | La conferma riepiloga il periodo; il blocco si rimuove (D4) |
 | I test end-to-end lasciano blocchi | Pulizia dei blocchi di prova all'inizio e alla fine, come per le prenotazioni |
 
+## Note di realizzazione
+- **Elenco diviso alla mezzanotte di oggi**: "Oggi e prossime" e "Storico" (giorni passati). Così lo storico non cambia durante la giornata e il CSV scaricato resta valido fino all'eliminazione.
+- **Giornate intere da oggi**: il blocco parte dalla prossima mezz'ora.
+- **Annullo d'ufficio** con un aggiornamento condizionato dal server (prenotazione attiva e non iniziata), senza una funzione dedicata nel database.
+- **Revisioni**: sicurezza e database senza problemi critici o gravi. Corretti: annullo solo di prenotazioni ancora attive dentro `create_block`, eliminazione per sottoinsieme, errori leggibili, conferma con giornate intere.
+
 ## Rollback
 Revert della pull request e migrazione inversa (rimozione di funzioni e colonna, ripristino del trigger di S6).
