@@ -14,7 +14,9 @@ export async function cancelBookingAction(
 ): Promise<CancelState> {
   const { user } = await requireProfile("/prenotazioni");
   const id = String(formData.get("id") ?? "");
-  if (!/^[0-9a-f-]{36}$/.test(id))
+  if (
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id)
+  )
     return { error: "Prenotazione non trovata." };
 
   const now = Temporal.Now.instant().toString();

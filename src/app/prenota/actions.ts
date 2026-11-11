@@ -58,6 +58,10 @@ export async function bookAction(
     .single();
   // 23P01: un'altra prenotazione si sovrappone (salvata nel frattempo).
   if (error?.code === "23P01") return { error: bookingErrorMessage("booked") };
+  // Il database rifiuta anche una prenotazione su un periodo bloccato nel frattempo.
+  if (error?.message.includes("slot_blocked")) {
+    return { error: bookingErrorMessage("blocked") };
+  }
   if (error)
     return { error: "Non siamo riusciti a salvare la prenotazione: riprova." };
 

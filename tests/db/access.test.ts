@@ -141,6 +141,19 @@ describe("1. esclusiva dello slot", () => {
     expect((await admin.from("bookings").insert(adjacent)).error).toBeNull();
   });
 
+  test("una prenotazione su un periodo bloccato viene rifiutata dal database", async () => {
+    const block = await admin
+      .from("blocks")
+      .insert({ ...futureSlot(18), reason: TEST_BLOCK_REASON })
+      .select("id")
+      .single();
+    if (block.error) throw block.error;
+    const result = await admin.from("bookings").insert(booking(idA, 18));
+    expect(result.error?.message).toContain("slot_blocked");
+    const removed = await admin.from("blocks").delete().eq("id", block.data.id);
+    if (removed.error) throw removed.error;
+  });
+
   test("una prenotazione senza autocertificazione viene rifiutata", async () => {
     const withoutAutocert: Partial<ReturnType<typeof booking>> = booking(
       idA,

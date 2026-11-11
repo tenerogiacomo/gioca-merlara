@@ -159,6 +159,13 @@ test("annullo: la prenotazione passa tra le annullate e l'orario torna libero", 
   await expect(page.getByText(/18:00–19:00 · Libero/)).toBeVisible();
 });
 
+test("un indirizzo malformato viene rifiutato senza errori del server", async ({
+  page,
+}) => {
+  const response = await page.goto("/prenota/%E0%A4%A");
+  expect(response?.status()).toBe(400);
+});
+
 test("la fascia gratuita non si unisce a quella a pagamento", async ({
   page,
 }) => {

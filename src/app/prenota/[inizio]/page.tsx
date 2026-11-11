@@ -17,6 +17,15 @@ export const metadata: Metadata = {
   title: "Conferma la prenotazione · Gioca Merlara",
 };
 
+/** Decodifica il parametro; un indirizzo malformato porta a "Orario non disponibile". */
+function safeDecode(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return "";
+  }
+}
+
 function parseInstant(value: string): Temporal.Instant | null {
   try {
     return Temporal.Instant.from(value);
@@ -29,7 +38,7 @@ export default async function BookingPage({
   params,
 }: PageProps<"/prenota/[inizio]">) {
   const { inizio } = await params;
-  const raw = decodeURIComponent(inizio);
+  const raw = safeDecode(inizio);
   await requireProfile(`/prenota/${encodeURIComponent(raw)}`);
 
   const startsAt = parseInstant(raw);
