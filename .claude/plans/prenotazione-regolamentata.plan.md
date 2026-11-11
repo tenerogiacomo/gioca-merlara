@@ -155,6 +155,7 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
 ### Lista di controllo prima del lancio
 Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma raccolta qui per non perderla):
 - [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
+- [ ] **Ruolo superadmin assegnato al numero reale** di chi gestisce (accede una volta all'app, poi `admin:superadmin` sul progetto di produzione; il ruolo vale dal login successivo).
 - [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
 - [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
 - [ ] Protezione dall'abuso degli SMS: captcha (Turnstile o hCaptcha) sull'invio del codice, limiti per indirizzo IP e per numero, tetto di spesa e paesi ammessi presso il provider SMS. L'app accetta già solo numeri italiani.
