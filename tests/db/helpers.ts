@@ -21,8 +21,13 @@ export async function signedInClient(
 ): Promise<Client> {
   const client = publicClient();
   const phone = requireEnv(`TEST_PHONE_${who}`);
-  const sent = await client.auth.signInWithOtp({ phone });
-  if (sent.error) throw sent.error;
+  // Supabase impone qualche secondo tra due codici per lo stesso numero: si riprova.
+  for (let attempt = 1; ; attempt++) {
+    const sent = await client.auth.signInWithOtp({ phone });
+    if (!sent.error) break;
+    if (attempt >= 6 || sent.error.status !== 429) throw sent.error;
+    await new Promise((resolve) => setTimeout(resolve, 10_000));
+  }
   const verified = await client.auth.verifyOtp({
     phone,
     token: requireEnv(`TEST_OTP_${who}`),

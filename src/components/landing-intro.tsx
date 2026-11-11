@@ -27,9 +27,17 @@ export function LandingIntro() {
           codice che ti arriva.
         </li>
       </ol>
-      <Link href="/accedi" className={buttonClassName({ fullWidth: true })}>
-        Accedi
-      </Link>
+      <div className="flex flex-col gap-2">
+        <Link href="/prenota" className={buttonClassName({ fullWidth: true })}>
+          Vedi gli orari liberi
+        </Link>
+        <Link
+          href="/accedi"
+          className={buttonClassName({ variant: "secondary", fullWidth: true })}
+        >
+          Accedi
+        </Link>
+      </div>
     </section>
   );
 }

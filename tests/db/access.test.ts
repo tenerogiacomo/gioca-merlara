@@ -106,7 +106,7 @@ describe("1. esclusiva dello slot", () => {
       (await admin.from("bookings").insert(booking(idA, 9))).error,
     ).toBeNull();
     const second = await admin.from("bookings").insert(booking(idB, 9));
-    expect(second.error?.code).toBe("23505");
+    expect(second.error?.code).toBe("23P01");
   });
 
   test("una prenotazione annullata libera lo slot", async () => {
@@ -122,6 +122,36 @@ describe("1. esclusiva dello slot", () => {
     expect(
       (await admin.from("bookings").insert(booking(idB, 9))).error,
     ).toBeNull();
+  });
+
+  test("una prenotazione di più ore blocca anche chi si sovrappone in parte", async () => {
+    const long = booking(idA, 13, {
+      starts_at: futureSlot(13).starts_at,
+      ends_at: futureSlot(15).starts_at,
+    });
+    expect((await admin.from("bookings").insert(long)).error).toBeNull();
+    const overlapping = booking(idB, 14, {
+      starts_at: futureSlot(14).starts_at,
+      ends_at: futureSlot(16).starts_at,
+    });
+    expect((await admin.from("bookings").insert(overlapping)).error?.code).toBe(
+      "23P01",
+    );
+    const adjacent = booking(idB, 15);
+    expect((await admin.from("bookings").insert(adjacent)).error).toBeNull();
+  });
+
+  test("una prenotazione su un periodo bloccato viene rifiutata dal database", async () => {
+    const block = await admin
+      .from("blocks")
+      .insert({ ...futureSlot(18), reason: TEST_BLOCK_REASON })
+      .select("id")
+      .single();
+    if (block.error) throw block.error;
+    const result = await admin.from("bookings").insert(booking(idA, 18));
+    expect(result.error?.message).toContain("slot_blocked");
+    const removed = await admin.from("blocks").delete().eq("id", block.data.id);
+    if (removed.error) throw removed.error;
   });
 
   test("una prenotazione senza autocertificazione viene rifiutata", async () => {
@@ -231,6 +261,7 @@ describe("4. calendario: solo i dati previsti", () => {
     expect(data?.length).toBeGreaterThan(0);
     for (const row of data ?? []) {
       expect(Object.keys(row).sort()).toEqual([
+        "ends_at",
         "first_name",
         "sport_id",
         "starts_at",
@@ -247,6 +278,7 @@ describe("4. calendario: solo i dati previsti", () => {
     );
     expect(slotOfA).toEqual({
       starts_at: expect.any(String),
+      ends_at: expect.any(String),
       sport_id: TEST_SPORT,
       first_name: "Anna",
     });
@@ -260,6 +292,7 @@ describe("4. calendario: solo i dati previsti", () => {
     expect(data).toEqual([
       {
         starts_at: expect.stringMatching(/^2020-06-10T10:00/),
+        ends_at: expect.stringMatching(/^2020-06-10T11:00/),
         sport_id: null,
         first_name: null,
       },

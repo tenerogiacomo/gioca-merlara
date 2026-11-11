@@ -15,8 +15,8 @@ export default defineConfig({
   fullyParallel: false,
   workers: 1,
   // Limiti espliciti: un server bloccato deve far fallire i test, non fermarli per minuti.
-  timeout: 60_000,
-  globalTimeout: 5 * 60_000,
+  timeout: 120_000,
+  globalTimeout: 10 * 60_000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: "list",

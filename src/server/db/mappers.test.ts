@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { Temporal } from "temporal-polyfill";
 import {
   toBlocks,
-  toBookedStarts,
+  toBookedPeriods,
   toDbTime,
   toPriceRules,
   toSports,
@@ -70,16 +70,17 @@ describe("conversioni dal database al dominio", () => {
     expect(
       block.startsAt.equals(Temporal.Instant.from("2026-11-12T08:00:00Z")),
     ).toBe(true);
-    const [start] = toBookedStarts([
+    const [booked] = toBookedPeriods([
       {
         starts_at: "2026-11-12T17:00:00+00:00",
+        ends_at: "2026-11-12T19:00:00+00:00",
         sport_id: "calcetto",
         first_name: "Marco",
       },
     ]);
-    expect(start.equals(Temporal.Instant.from("2026-11-12T17:00:00Z"))).toBe(
-      true,
-    );
+    expect(
+      booked.endsAt.equals(Temporal.Instant.from("2026-11-12T19:00:00Z")),
+    ).toBe(true);
   });
 });
 

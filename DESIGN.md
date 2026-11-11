@@ -174,4 +174,4 @@ File in `public/brand/`.
 
 Richieste di modifica al frontend puro emerse durante i lavori, da realizzare a fine progetto.
 
-- **Nuovo design di accesso e pagina iniziale** (annunciato dal committente il 10 novembre 2026): sostituirà il look and feel di `/`, `/accedi` e `/accedi/codice`. Queste schermate sono isolate in pochi componenti per facilitare il restyling.
+- **Nuovo design di accesso e pagina iniziale** (annunciato dal committente il 10 novembre 2026): sostituirà il look and feel di `/`, `/accedi` e `/accedi/codice`. Queste schermate sono isolate in pochi componenti per facilitare il restyling. Il testo della pagina iniziale resta in bozza fino al redesign, che potrà arrivare alla fine del progetto, anche dopo il test con utenti reali.

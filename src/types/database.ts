@@ -227,6 +227,7 @@ export type Database = {
       occupied_slots: {
         Args: { p_from: string; p_to: string };
         Returns: {
+          ends_at: string;
           first_name: string;
           sport_id: string;
           starts_at: string;

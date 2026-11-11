@@ -15,7 +15,7 @@ export function testUser(who: "USER_A" | "USER_B" | "SUPERADMIN") {
 }
 
 export async function requestCode(page: Page, national: string) {
-  for (let attempt = 0; attempt < 2; attempt++) {
+  for (let attempt = 0; attempt < 6; attempt++) {
     await page.goto("/accedi");
     await page.getByLabel("Numero di cellulare").fill(national);
     await page.getByRole("button", { name: "Inviami il codice" }).click();
@@ -24,7 +24,7 @@ export async function requestCode(page: Page, national: string) {
     await expect(heading.or(tooMany)).toBeVisible();
     if (await heading.isVisible()) return;
     // Supabase impone qualche secondo tra due codici per lo stesso numero.
-    await page.waitForTimeout(6_000);
+    await page.waitForTimeout(10_000);
   }
   throw new Error("Codice non inviato: troppi tentativi");
 }

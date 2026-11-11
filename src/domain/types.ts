@@ -28,8 +28,11 @@ export type PriceRule = {
   priceCents: number;
 };
 
+/** Intervallo di tempo, fine esclusa. */
+export type Period = { startsAt: Temporal.Instant; endsAt: Temporal.Instant };
+
 /** Periodo in cui la struttura non è prenotabile: una fascia o più giorni. */
-export type Block = { startsAt: Temporal.Instant; endsAt: Temporal.Instant };
+export type Block = Period;
 
 export type SlotStatus =
   "available" | "booked" | "blocked" | "past" | "unpriced";

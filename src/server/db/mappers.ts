@@ -3,6 +3,7 @@ import {
   WEEKDAYS,
   type Block,
   type LocalTime,
+  type Period,
   type PriceRule,
   type Sport,
   type Weekday,
@@ -65,11 +66,14 @@ export function toBlocks(
 }
 
 /**
- * Inizi degli slot occupati. Attenzione: i tipi generati dichiarano `sport_id` e `first_name`
- * come stringhe, ma per chi non ha una sessione (o per slot finiti) valgono `null`.
+ * Periodi occupati dalle prenotazioni attive. Attenzione: i tipi generati dichiarano `sport_id`
+ * e `first_name` come stringhe, ma per chi non ha un profilo (o per prenotazioni finite) valgono `null`.
  */
-export function toBookedStarts(
+export function toBookedPeriods(
   rows: Functions["occupied_slots"]["Returns"],
-): Temporal.Instant[] {
-  return rows.map((row) => Temporal.Instant.from(row.starts_at));
+): Period[] {
+  return rows.map((row) => ({
+    startsAt: Temporal.Instant.from(row.starts_at),
+    endsAt: Temporal.Instant.from(row.ends_at),
+  }));
 }
