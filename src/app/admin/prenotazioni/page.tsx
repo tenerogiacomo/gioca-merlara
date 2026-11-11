@@ -115,7 +115,7 @@ export default async function AdminBookingsPage({
       <h1 className="text-3xl font-bold">Prenotazioni</h1>
       <AdminNav />
 
-      <h2 className="text-2xl font-semibold">Prossime</h2>
+      <h2 className="text-2xl font-semibold">Oggi e prossime</h2>
       {upcoming.length === 0 && (
         <p className="text-text-muted">Nessuna prenotazione in programma.</p>
       )}
@@ -157,6 +157,12 @@ export default async function AdminBookingsPage({
       <h2 id="storico" className="text-2xl font-semibold">
         Storico
       </h2>
+      {params.aggiornato === "1" && (
+        <Alert tone="warning">
+          Lo storico è cambiato dopo il download: scarica di nuovo il CSV prima
+          di eliminare.
+        </Alert>
+      )}
       {Number.isInteger(deleted) && deleted > 0 && (
         <Alert tone="success">
           {deleted === 1
@@ -187,8 +193,8 @@ export default async function AdminBookingsPage({
       </form>
       <p className="text-text-muted">
         {history.total === 1
-          ? "1 prenotazione conclusa"
-          : `${history.total} prenotazioni concluse`}{" "}
+          ? "1 prenotazione dei giorni passati"
+          : `${history.total} prenotazioni dei giorni passati`}{" "}
         {describeRange(range)}.
       </p>
       <ul className="flex flex-col gap-2">

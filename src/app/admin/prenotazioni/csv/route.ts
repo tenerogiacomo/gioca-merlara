@@ -1,26 +1,14 @@
 import { Temporal } from "temporal-polyfill";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { getCurrentUser } from "@/server/auth";
+import { requireSuperadmin } from "@/server/auth";
 import { historyRange, loadAllHistory } from "@/server/admin/bookings";
 import { bookingsToCsv, fingerprint } from "@/server/admin/csv";
 
-const notFound = () => new Response("Pagina non trovata", { status: 404 });
-
 /**
  * CSV dello storico del periodo (D5b), solo per il superadmin. Il ruolo si rilegge dal server
- * di Supabase, come nei salvataggi: il file contiene dati personali.
+ * di Supabase, come nei salvataggi: il file contiene dati personali. Per gli altri, 404.
  */
 export async function GET(request: Request) {
-  const user = await getCurrentUser();
-  if (!user?.isSuperadmin) return notFound();
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (
-    error ||
-    data.user?.id !== user.id ||
-    data.user.app_metadata?.role !== "superadmin"
-  )
-    return notFound();
+  await requireSuperadmin({ fresh: true });
 
   const params = new URL(request.url).searchParams;
   const range = historyRange({

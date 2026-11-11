@@ -78,6 +78,22 @@ describe("parseBlockPeriod", () => {
     ).toEqual({ ok: false, error: "in_past" });
   });
 
+  test("giornate intere da oggi: il blocco parte dalla prossima mezz'ora", () => {
+    const result = parseBlockPeriod(
+      {
+        ...input,
+        fromDate: "2026-11-11",
+        toDate: "2026-11-11",
+        wholeDays: true,
+      },
+      Temporal.Instant.from("2026-11-11T10:12:00Z"),
+    );
+    expect(result.ok && result.value).toEqual({
+      startsAt: Temporal.Instant.from("2026-11-11T10:30:00Z"),
+      endsAt: Temporal.Instant.from("2026-11-11T23:00:00Z"),
+    });
+  });
+
   test("un'ora che non esiste per il passaggio all'ora legale", () => {
     expect(
       parseBlockPeriod(

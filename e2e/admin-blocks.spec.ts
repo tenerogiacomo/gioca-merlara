@@ -145,7 +145,7 @@ test("storico: CSV obbligatorio e doppia conferma prima di eliminare", async ({
   await page.goto("/admin/prenotazioni?dal=2021-03-01&al=2021-03-31");
   await expect(
     page.getByText(
-      "2 prenotazioni concluse dal 1 marzo 2021 al 31 marzo 2021.",
+      "2 prenotazioni dei giorni passati dal 1 marzo 2021 al 31 marzo 2021.",
     ),
   ).toBeVisible();
   await expect(
@@ -178,7 +178,7 @@ test("storico: CSV obbligatorio e doppia conferma prima di eliminare", async ({
   ).toBeVisible();
   await expect(
     page.getByText(
-      "0 prenotazioni concluse dal 1 marzo 2021 al 31 marzo 2021.",
+      "0 prenotazioni dei giorni passati dal 1 marzo 2021 al 31 marzo 2021.",
     ),
   ).toBeVisible();
 });

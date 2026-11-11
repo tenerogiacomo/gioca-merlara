@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { Temporal } from "temporal-polyfill";
+import { isUuid } from "@/lib/ids";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import { requireSuperadmin } from "@/server/auth";
 import { historyRange, loadHistoryIds } from "@/server/admin/bookings";
@@ -11,8 +12,6 @@ import { parseReason, REASON_ERROR } from "@/server/admin/forms";
 
 export type AdminCancelState = { error?: string } | undefined;
 
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
-
 /** Annullo d'ufficio (D6): prenotazione attiva non ancora iniziata, con motivo facoltativo. */
 export async function cancelByAdminAction(
   _state: AdminCancelState,
@@ -20,7 +19,7 @@ export async function cancelByAdminAction(
 ): Promise<AdminCancelState> {
   await requireSuperadmin({ fresh: true });
   const id = String(formData.get("id") ?? "");
-  if (!UUID.test(id)) return { error: "Prenotazione non trovata." };
+  if (!isUuid(id)) return { error: "Prenotazione non trovata." };
   const reason = parseReason(formData.get("reason"));
   if (!reason.ok) return { error: REASON_ERROR };
 
@@ -44,13 +43,22 @@ export async function cancelByAdminAction(
     };
   }
   revalidatePath("/admin", "layout");
+  revalidatePath("/prenota");
   return undefined;
 }
 
 export type DeleteHistoryState = { error?: string } | undefined;
 
-const OUTDATED =
-  "Lo storico di questo periodo è cambiato dopo il download: scarica di nuovo il CSV e riprova.";
+/** Lo storico è cambiato dopo il download: si ricarica la pagina con la nuova impronta. */
+function outdated(range: {
+  fromDate: string | null;
+  toDate: string | null;
+}): never {
+  const params = new URLSearchParams({ aggiornato: "1" });
+  if (range.fromDate) params.set("dal", range.fromDate);
+  if (range.toDate) params.set("al", range.toDate);
+  redirect(`/admin/prenotazioni?${params}#storico`);
+}
 
 /**
  * Eliminazione dallo storico (D5b): solo le prenotazioni del CSV scaricato (stessa impronta)
@@ -71,7 +79,7 @@ export async function deleteHistoryAction(
   if (ids.length === 0)
     return { error: "Non ci sono prenotazioni da eliminare." };
   if (fingerprint(ids) !== String(formData.get("fingerprint") ?? ""))
-    return { error: OUTDATED };
+    outdated(range);
   if (String(formData.get("typedCount") ?? "").trim() !== String(ids.length)) {
     return {
       error: `Per confermare scrivi il numero delle prenotazioni da eliminare: ${ids.length}.`,
@@ -86,7 +94,7 @@ export async function deleteHistoryAction(
       p_ids: ids,
     },
   );
-  if (error?.message.includes("export_outdated")) return { error: OUTDATED };
+  if (error?.message.includes("export_outdated")) outdated(range);
   if (error) return { error: "Non siamo riusciti a eliminare: riprova." };
 
   revalidatePath("/admin", "layout");

@@ -5,6 +5,7 @@ import { slotStartsFor } from "./schedule";
 import {
   formatLocalTime,
   parseLocalTime,
+  parsePlainDate,
   romeLocalToInstant,
   toRome,
 } from "./time";
@@ -43,15 +44,6 @@ export type BlockInputError =
   | "end_before_start"
   | "in_past";
 
-function parseDate(value: string): Temporal.PlainDate | null {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
-  try {
-    return Temporal.PlainDate.from(value, { overflow: "reject" });
-  } catch {
-    return null;
-  }
-}
-
 /** Minuti dalla mezzanotte se l'ora è a mezz'ore (24:00 compreso), altrimenti `null`. */
 function parseStepTime(value: string): number | null {
   const minutes = parseLocalTime(value);
@@ -73,8 +65,8 @@ export function parseBlockPeriod(
   input: BlockInput,
   now: Temporal.Instant,
 ): Result<Period, BlockInputError> {
-  const fromDate = parseDate(input.fromDate);
-  const toDate = parseDate(input.toDate);
+  const fromDate = parsePlainDate(input.fromDate);
+  const toDate = parsePlainDate(input.toDate);
   if (!fromDate || !toDate) return err("invalid_date");
 
   const fromMinutes = input.wholeDays ? 0 : parseStepTime(input.fromTime);
@@ -82,9 +74,20 @@ export function parseBlockPeriod(
   if (fromMinutes === null || toMinutes === null || fromMinutes === 24 * 60)
     return err("invalid_time");
 
-  const startsAt = toInstant(fromDate, fromMinutes);
+  let startsAt = toInstant(fromDate, fromMinutes);
   const endsAt = toInstant(toDate, toMinutes);
   if (!startsAt || !endsAt) return err("nonexistent_time");
+  // Giornate intere da oggi: il blocco parte dalla prossima mezz'ora.
+  if (
+    input.wholeDays &&
+    Temporal.Instant.compare(startsAt, now) <= 0 &&
+    fromDate.equals(toRome(now).toPlainDate())
+  ) {
+    const step = BLOCK_STEP_MINUTES * 60 * 1000;
+    startsAt = Temporal.Instant.fromEpochMilliseconds(
+      (Math.floor(now.epochMilliseconds / step) + 1) * step,
+    );
+  }
   if (Temporal.Instant.compare(startsAt, endsAt) >= 0)
     return err("end_before_start");
   if (Temporal.Instant.compare(startsAt, now) <= 0) return err("in_past");

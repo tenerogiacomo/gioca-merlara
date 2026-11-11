@@ -1,5 +1,6 @@
 import "server-only";
 import { Temporal } from "temporal-polyfill";
+import { parsePlainDate, romeMidnight } from "@/domain/time";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import type { AdminBooking } from "./csv";
@@ -19,23 +20,13 @@ export type HistoryRange = {
   to: Temporal.Instant | null;
 };
 
-function parseDay(value: unknown): Temporal.PlainDate | null {
-  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
-    return null;
-  try {
-    return Temporal.PlainDate.from(value, { overflow: "reject" });
-  } catch {
-    return null;
-  }
-}
-
 /** Periodo dai parametri `dal` e `al` (AAAA-MM-GG); i valori non validi si ignorano. */
 export function historyRange(params: {
   dal?: unknown;
   al?: unknown;
 }): HistoryRange {
-  const fromDay = parseDay(params.dal);
-  const toDay = parseDay(params.al);
+  const fromDay = parsePlainDate(params.dal);
+  const toDay = parsePlainDate(params.al);
   const midnight = (day: Temporal.PlainDate) =>
     day.toZonedDateTime("Europe/Rome").toInstant();
   return {
@@ -94,7 +85,13 @@ async function toAdminBookings(rows: Row[]): Promise<AdminBooking[]> {
   }));
 }
 
-/** Prenotazioni non ancora finite (anche annullate), dalla più vicina. Letta come superadmin. */
+/*
+ * Elenco diviso alla mezzanotte di oggi (ora di Roma): "oggi e prossime" sono le prenotazioni che
+ * finiscono dopo, lo "storico" quelle finite prima. Così lo storico non cambia nel corso della
+ * giornata e il CSV scaricato resta valido fino all'eliminazione.
+ */
+
+/** Prenotazioni di oggi e future (anche annullate), dalla più vicina. Letta come superadmin. */
 export async function loadUpcomingBookings(
   now: Temporal.Instant,
 ): Promise<AdminBooking[]> {
@@ -102,7 +99,7 @@ export async function loadUpcomingBookings(
   const { data, error } = await supabase
     .from("bookings")
     .select(COLUMNS)
-    .gt("ends_at", now.toString())
+    .gt("ends_at", romeMidnight(now).toString())
     .order("starts_at")
     .limit(BATCH);
   if (error) throw error;
@@ -112,15 +109,17 @@ export async function loadUpcomingBookings(
 type ServerClient = Awaited<ReturnType<typeof createSupabaseServerClient>>;
 
 /** Query dello storico (non ancora eseguita): un builder di Supabase si esegue con `await`. */
-function historyQuery(
+function historyQuery<Columns extends string>(
   supabase: ServerClient,
+  columns: Columns,
   range: HistoryRange,
   now: Temporal.Instant,
+  count?: "exact",
 ) {
   let query = supabase
     .from("bookings")
-    .select(COLUMNS, { count: "exact" })
-    .lte("ends_at", now.toString());
+    .select(columns, { count })
+    .lte("ends_at", romeMidnight(now).toString());
   if (range.from) query = query.gte("starts_at", range.from.toString());
   if (range.to) query = query.lt("starts_at", range.to.toString());
   return query.order("starts_at", { ascending: false }).order("id");
@@ -134,10 +133,13 @@ export async function loadHistoryPage(
 ): Promise<{ bookings: AdminBooking[]; total: number }> {
   const offset = (page - 1) * HISTORY_PAGE_SIZE;
   const supabase = await createSupabaseServerClient();
-  const { data, error, count } = await historyQuery(supabase, range, now).range(
-    offset,
-    offset + HISTORY_PAGE_SIZE - 1,
-  );
+  const { data, error, count } = await historyQuery(
+    supabase,
+    COLUMNS,
+    range,
+    now,
+    "exact",
+  ).range(offset, offset + HISTORY_PAGE_SIZE - 1);
   if (error) throw error;
   return { bookings: await toAdminBookings(data as Row[]), total: count ?? 0 };
 }
@@ -150,12 +152,14 @@ export async function loadAllHistory(
   const rows: Row[] = [];
   const supabase = await createSupabaseServerClient();
   for (let offset = 0; ; offset += BATCH) {
-    const { data, error } = await historyQuery(supabase, range, now).range(
-      offset,
-      offset + BATCH - 1,
-    );
+    const { data, error } = await historyQuery(
+      supabase,
+      COLUMNS,
+      range,
+      now,
+    ).range(offset, offset + BATCH - 1);
     if (error) throw error;
-    rows.push(...(data as Row[]));
+    rows.push(...(data as unknown as Row[]));
     if (data.length < BATCH) break;
   }
   return toAdminBookings(rows);
@@ -184,17 +188,14 @@ export async function loadHistoryIds(
   const supabase = await createSupabaseServerClient();
   const ids: string[] = [];
   for (let offset = 0; ; offset += BATCH) {
-    let query = supabase
-      .from("bookings")
-      .select("id")
-      .lte("ends_at", now.toString());
-    if (range.from) query = query.gte("starts_at", range.from.toString());
-    if (range.to) query = query.lt("starts_at", range.to.toString());
-    const { data, error } = await query
-      .order("id")
-      .range(offset, offset + BATCH - 1);
+    const { data, error } = await historyQuery(
+      supabase,
+      "id",
+      range,
+      now,
+    ).range(offset, offset + BATCH - 1);
     if (error) throw error;
-    ids.push(...data.map((row) => row.id));
+    ids.push(...(data as unknown as { id: string }[]).map((row) => row.id));
     if (data.length < BATCH) return ids;
   }
 }

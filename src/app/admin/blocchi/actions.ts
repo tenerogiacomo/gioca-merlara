@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { Temporal } from "temporal-polyfill";
 import { parseBlockPeriod } from "@/domain/block";
+import { isUuid } from "@/lib/ids";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 import { requireSuperadmin } from "@/server/auth";
 import { loadBookingsByIds } from "@/server/admin/bookings";
@@ -33,7 +34,6 @@ export type BlockFormState =
 
 const SAVE_FAILED =
   "Non siamo riusciti a salvare: riprova tra qualche istante.";
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 export async function createBlockAction(
   _state: BlockFormState,
@@ -60,7 +60,7 @@ export async function createBlockAction(
   const confirmedIds = String(formData.get("confirmedIds") ?? "")
     .split(",")
     .filter(Boolean);
-  if (confirmedIds.length > 500 || confirmedIds.some((id) => !UUID.test(id)))
+  if (confirmedIds.length > 2000 || !confirmedIds.every(isUuid))
     return { errors: [SAVE_FAILED] };
 
   const { startsAt, endsAt } = period.value;
@@ -87,6 +87,10 @@ export async function createBlockAction(
   }
   if (error?.message.includes("block_in_past"))
     return { errors: [blockInputMessage("in_past")] };
+  if (error?.message.includes("block_not_aligned"))
+    return { errors: [blockInputMessage("invalid_time")] };
+  if (error?.message.includes("block_invalid_period"))
+    return { errors: [blockInputMessage("end_before_start")] };
   if (error || !data) return { errors: [SAVE_FAILED] };
 
   const result = data as

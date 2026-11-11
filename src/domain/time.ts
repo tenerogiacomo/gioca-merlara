@@ -36,3 +36,19 @@ export function romeLocalToInstant(
     zoned.hour === Math.floor(minutes / 60) && zoned.minute === minutes % 60;
   return sameWallClock ? zoned.toInstant() : null;
 }
+
+/** Data `AAAA-MM-GG` valida (niente 30 febbraio), altrimenti `null`. */
+export function parsePlainDate(value: unknown): Temporal.PlainDate | null {
+  if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value))
+    return null;
+  try {
+    return Temporal.PlainDate.from(value, { overflow: "reject" });
+  } catch {
+    return null;
+  }
+}
+
+/** Mezzanotte (ora di Roma) all'inizio del giorno dell'istante. */
+export function romeMidnight(instant: Temporal.Instant): Temporal.Instant {
+  return toRome(instant).toPlainDate().toZonedDateTime(TIME_ZONE).toInstant();
+}
