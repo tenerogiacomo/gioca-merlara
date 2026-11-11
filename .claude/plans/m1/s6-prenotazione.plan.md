@@ -10,11 +10,11 @@
 ## Obiettivo
 Il cuore del servizio: una persona con profilo completo vede il calendario della struttura, sceglie giorno, orario e sport, accetta l'autocertificazione e prenota. Poi ritrova le sue prenotazioni e può annullarle. Il server ricontrolla sempre la richiesta con le regole di S2; il database garantisce l'esclusiva dello slot.
 
-## Decisioni da approvare
+## Decisioni (approvate l'11 novembre 2026)
 | # | Decisione proposta |
 |---|---|
 | D1 | **Calendario visibile a tutti**, anche senza accesso, ma solo come "libero" / "occupato". Chi ha il profilo vede anche nome e sport di chi ha prenotato (S3). Per prenotare servono accesso e profilo completo. |
-| D2 | **Percorso**: giorno → slot libero → sport (solo quelli con un prezzo in quello slot) → autocertificazione → "Prenota". **Uno slot per prenotazione**: per due ore consecutive si fanno due prenotazioni. |
+| D2 | **Percorso**: giorno → slot libero d'inizio → sport (solo quelli con un prezzo in quello slot) → **durata** → autocertificazione → "Prenota". **Una prenotazione può coprire più slot consecutivi** (2, 3 o più ore), senza un limite di durata se non l'orario di apertura e gli slot liberi; **il costo è la somma dei prezzi degli slot** per lo sport scelto. Una prenotazione non può unire slot gratuiti e a pagamento: le fasce gratuite si prenotano a sé. |
 | D3 | **Annullo dell'utente sempre possibile fino all'inizio dello slot**, anche a ridosso (raccomandazione di cortesia: 24 ore prima). Dopo l'inizio non si annulla più. Nessun voucher nella milestone 1: arriva con la milestone 2. |
 | D4 | **Autocertificazione v1 in bozza**, scritta da Claude a partire dal PRD (danni alla struttura, infortuni, impegno a richiudere a fine slot): va validata dai legali prima del lancio. Si accetta a ogni prenotazione; versione e momento restano nella prenotazione. |
 | D5 | **Prezzo mostrato, nessun pagamento** nella milestone 1: la prenotazione è confermata subito. Il pagamento arriva con la milestone 2. |
@@ -33,7 +33,7 @@ Il cuore del servizio: una persona con profilo completo vede il calendario della
 Stati degli slot nel calendario: Libero (con i prezzi), Occupato (con nome e sport per chi ha il profilo), Chiuso per un blocco, Passato, Non prenotabile (nessun prezzo). Il giorno scelto e lo slot scelto usano l'accento rosa, come previsto da `DESIGN.md`.
 
 ### Server actions
-- **Prenota**: verifica sessione e profilo; ricarica configurazione, blocchi e slot occupati; verifica la richiesta con `checkBookingRequest` (S2); inserisce con il client di servizio, con prezzo, sport e autocertificazione. Se lo slot viene preso nel frattempo, il vincolo del database lo impedisce e l'utente vede un messaggio chiaro con il calendario aggiornato.
+- **Prenota**: verifica sessione e profilo; ricarica configurazione, blocchi e periodi occupati; verifica inizio, durata e sport con `checkBookingRequest` (S2, esteso a più slot); inserisce con il client di servizio una sola prenotazione con inizio, fine, prezzo totale, sport e autocertificazione. Se lo slot viene preso nel frattempo, il vincolo del database lo impedisce e l'utente vede un messaggio chiaro con il calendario aggiornato.
 - **Annulla**: verifica che la prenotazione sia dell'utente, attiva e non ancora iniziata; la segna come annullata dall'utente.
 
 ### Messaggi (dal dominio di S2)
@@ -51,6 +51,11 @@ Stati degli slot nel calendario: Libero (con i prezzi), Occupato (con nome e spo
 
 ### 6.1 Branch e stati
 - **Azione**: branch da `main`; S5 `complete` e S6 `in-progress` nel piano padre.
+
+### 6.1b Prenotazioni di più ore (conseguenza di D2)
+- **Database**: l'esclusiva diventa un vincolo di non sovrapposizione degli intervalli di tempo delle prenotazioni attive (al posto dell'unicità sull'inizio); `occupied_slots` restituisce anche la fine della prenotazione.
+- **Dominio (S2)**: gli slot occupati diventano periodi occupati; `checkBookingRequest` accetta una durata e verifica che tutti gli slot siano consecutivi, liberi, con prezzo per lo sport e tutti gratuiti o tutti a pagamento (errore `mixed_free_paid`); prezzo totale come somma; funzione che elenca le durate possibili da uno slot d'inizio per uno sport.
+- **Verifica**: test unitari del dominio; `npm run test:db` con il nuovo vincolo (sovrapposizione parziale rifiutata).
 
 ### 6.2 Autocertificazione v1
 - **Azione**: `content/autocertificazione-v1.md` in bozza (D4) e modulo che espone testo e versione.
