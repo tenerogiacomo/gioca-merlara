@@ -4,6 +4,8 @@ const LINKS = [
   { href: "/admin", label: "Riepilogo" },
   { href: "/admin/orario", label: "Orario" },
   { href: "/admin/sport", label: "Sport e prezzi" },
+  { href: "/admin/blocchi", label: "Blocchi" },
+  { href: "/admin/prenotazioni", label: "Prenotazioni" },
 ];
 
 export function AdminNav() {

@@ -95,7 +95,7 @@ export function testPhones(): string[] {
   ].map(requireEnv);
 }
 
-/** Cancella prenotazioni e profili dei soli utenti di prova. Gli utenti restano. */
+/** Cancella prenotazioni, profili e blocchi creati dai soli utenti di prova. Gli utenti restano. */
 export async function resetTestData(admin: AdminClient): Promise<number> {
   const ids: string[] = [];
   for (const phone of testPhones()) {
@@ -107,6 +107,8 @@ export async function resetTestData(admin: AdminClient): Promise<number> {
   if (bookings.error) throw bookings.error;
   const profiles = await admin.from("profiles").delete().in("id", ids);
   if (profiles.error) throw profiles.error;
+  const blocks = await admin.from("blocks").delete().in("created_by", ids);
+  if (blocks.error) throw blocks.error;
   return ids.length;
 }
 

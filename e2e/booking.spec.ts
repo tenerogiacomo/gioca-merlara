@@ -1,57 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { Temporal } from "temporal-polyfill";
-import { createAdminClient, findUserByPhone } from "../scripts/lib/admin";
-import { signIn } from "./helpers";
-
-/** Inizio di uno slot tra `days` giorni alle `hour` (ora di Roma), come lo usa l'indirizzo. */
-function slotAt(days: number, hour: number) {
-  const date = Temporal.Now.zonedDateTimeISO("Europe/Rome")
-    .toPlainDate()
-    .add({ days });
-  const instant = date
-    .toZonedDateTime({ timeZone: "Europe/Rome", plainTime: { hour } })
-    .toInstant();
-  return {
-    date: date.toString(),
-    path: `/prenota/${encodeURIComponent(instant.toString())}`,
-  };
-}
-
-async function ensureProfile(
-  phoneVar: string,
-  profile: Record<string, string>,
-) {
-  const admin = createAdminClient();
-  const user = await findUserByPhone(admin, process.env[phoneVar]!);
-  if (!user) return;
-  const existing = await admin
-    .from("profiles")
-    .select("id")
-    .eq("id", user.id)
-    .maybeSingle();
-  if (existing.data) return;
-  const result = await admin
-    .from("profiles")
-    .insert({ id: user.id, ...profile } as never);
-  if (result.error) throw result.error;
-}
+import { ensureProfile, signIn, slotAt } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
 
 test.beforeAll(async () => {
   // Gli utenti di prova accedono già nei test di accesso; qui servono entrambi con un profilo.
-  await ensureProfile("TEST_PHONE_USER_A", {
-    first_name: "Mario",
-    last_name: "Rossi",
-    birth_date: "1985-12-10",
-    tax_code: "RSSMRA85T10A562S",
-  });
-  await ensureProfile("TEST_PHONE_USER_B", {
-    first_name: "Bruno",
-    last_name: "Prova",
-    birth_date: "1990-01-01",
-    tax_code: "PRVBRN90A01A001B",
-  });
+  await ensureProfile("USER_A");
+  await ensureProfile("USER_B");
 });
 
 test("senza accesso il calendario mostra gli orari e invita ad accedere", async ({

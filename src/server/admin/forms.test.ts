@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   describeUncovered,
   parsePriceRulesInput,
+  parseReason,
   parseScheduleInput,
   priceIssueMessage,
   scheduleIssueMessage,
@@ -121,5 +122,18 @@ describe("describeUncovered", () => {
       "Domenica 09:00–10:00",
       "Domenica 21:00–22:00",
     ]);
+  });
+});
+
+describe("parseReason", () => {
+  test("vuoto, valido e non valido", () => {
+    expect(parseReason("  ")).toEqual({ ok: true, value: null });
+    expect(parseReason(" Manutenzione ")).toEqual({
+      ok: true,
+      value: "Manutenzione",
+    });
+    expect(parseReason("a".repeat(201)).ok).toBe(false);
+    expect(parseReason("riga\nnuova").ok).toBe(false);
+    expect(parseReason(undefined)).toEqual({ ok: true, value: null });
   });
 });

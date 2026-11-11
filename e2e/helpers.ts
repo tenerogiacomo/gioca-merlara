@@ -1,4 +1,6 @@
 import { expect, type Page } from "@playwright/test";
+import { Temporal } from "temporal-polyfill";
+import { createAdminClient, findUserByPhone } from "../scripts/lib/admin";
 
 export function testUser(who: "USER_A" | "USER_B" | "SUPERADMIN") {
   const phone = process.env[`TEST_PHONE_${who}`];
@@ -60,4 +62,53 @@ export async function fillProfile(
   await page.getByLabel("Data di nascita").fill(profile.birthDate);
   await page.getByLabel("Codice fiscale").fill(profile.taxCode);
   await page.getByRole("button", { name: "Salva il profilo" }).click();
+}
+
+/** Inizio di uno slot tra `days` giorni alle `hour` (ora di Roma), come lo usa l'indirizzo. */
+export function slotAt(days: number, hour: number) {
+  const date = Temporal.Now.zonedDateTimeISO("Europe/Rome")
+    .toPlainDate()
+    .add({ days });
+  const instant = date
+    .toZonedDateTime({ timeZone: "Europe/Rome", plainTime: { hour } })
+    .toInstant();
+  return {
+    date: date.toString(),
+    instant,
+    path: `/prenota/${encodeURIComponent(instant.toString())}`,
+  };
+}
+
+export const PROFILES = {
+  USER_A: {
+    first_name: "Mario",
+    last_name: "Rossi",
+    birth_date: "1985-12-10",
+    tax_code: "RSSMRA85T10A562S",
+  },
+  USER_B: {
+    first_name: "Bruno",
+    last_name: "Prova",
+    birth_date: "1990-01-01",
+    tax_code: "PRVBRN90A01A001B",
+  },
+} as const;
+
+/** Profilo dell'utente di prova, se manca (i dati di prova si azzerano a inizio e fine test). */
+export async function ensureProfile(who: keyof typeof PROFILES) {
+  const admin = createAdminClient();
+  const user = await findUserByPhone(admin, process.env[`TEST_PHONE_${who}`]!);
+  if (!user) return null;
+  const existing = await admin
+    .from("profiles")
+    .select("id")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (!existing.data) {
+    const result = await admin
+      .from("profiles")
+      .insert({ id: user.id, ...PROFILES[who] });
+    if (result.error) throw result.error;
+  }
+  return user.id;
 }

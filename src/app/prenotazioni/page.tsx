@@ -28,7 +28,9 @@ export default async function MyBookingsPage({
   const [bookings, sports] = await Promise.all([
     supabase
       .from("bookings")
-      .select("id, sport_id, starts_at, ends_at, price_cents, status")
+      .select(
+        "id, sport_id, starts_at, ends_at, price_cents, status, cancel_reason",
+      )
       .eq("user_id", user.id)
       .order("starts_at"),
     supabase.from("sports").select("id, name"),
@@ -106,6 +108,9 @@ export default async function MyBookingsPage({
                   {names[row.sport_id] ?? row.sport_id} ·{" "}
                   {formatPrice(row.price_cents)}
                   {STATUS[row.status] ? ` · ${STATUS[row.status]}` : ""}
+                  {row.status === "cancelled_by_admin" && row.cancel_reason
+                    ? `: ${row.cancel_reason}`
+                    : ""}
                 </span>
               </li>
             ))}
