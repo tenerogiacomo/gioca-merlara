@@ -16,6 +16,7 @@
     "db:push": "supabase db push --remote",
     "db:types": "supabase gen types --lang typescript --remote < /dev/null > src/types/database.ts && prettier --write src/types/database.ts",
     "admin:superadmin": "tsx --env-file=.env.local scripts/assign-superadmin.ts",
+    "admin:revoke": "tsx --env-file=.env.local scripts/revoke-superadmin.ts",
     "db:seed": "tsx --env-file=.env.local scripts/seed-dev.ts",
     "db:reset-test": "tsx --env-file=.env.local scripts/reset-test-data.ts",
     "test:db": "vitest run --config vitest.db.config.mts"

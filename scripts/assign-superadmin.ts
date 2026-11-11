@@ -7,6 +7,7 @@
 import {
   assignSuperadmin,
   createAdminClient,
+  phoneArgument,
   requireConfirmation,
   requireEnv,
 } from "./lib/admin";
@@ -14,18 +15,7 @@ import {
 async function run() {
   const args = process.argv.slice(2);
   requireConfirmation(args);
-  const confirmIndex = args.indexOf("--confirm");
-  const positional = args.filter(
-    (_, index) => index !== confirmIndex && index !== confirmIndex + 1,
-  );
-  if (positional.length > 1)
-    throw new Error("Indica al massimo un numero di telefono");
-  const phone = positional[0] ?? requireEnv("TEST_PHONE_SUPERADMIN");
-  if (!/^\d{8,15}$/.test(phone)) {
-    throw new Error(
-      `Numero non valido: ${phone}. Usa solo cifre con il prefisso, es. 393331234567`,
-    );
-  }
+  const phone = phoneArgument(args, requireEnv("TEST_PHONE_SUPERADMIN"));
   const user = await assignSuperadmin(createAdminClient(), phone);
   console.log(`Ruolo superadmin assegnato all'utente ${user.id}.`);
 }

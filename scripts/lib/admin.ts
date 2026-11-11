@@ -87,6 +87,39 @@ export async function assignSuperadmin(
   return data.user;
 }
 
+/** Toglie il ruolo superadmin: i salvataggi lo rileggono subito, le pagine al prossimo rinnovo dell'accesso. */
+export async function revokeSuperadmin(
+  admin: AdminClient,
+  phone: string,
+): Promise<User> {
+  const user = await findUserByPhone(admin, phone);
+  if (!user) throw new Error(`Nessun utente con il numero ${phone}`);
+  // Supabase unisce app_metadata ai valori esistenti: il ruolo si azzera esplicitamente.
+  const { data, error } = await admin.auth.admin.updateUserById(user.id, {
+    app_metadata: { role: null },
+  });
+  if (error) throw error;
+  return data.user;
+}
+
+/** Numero di telefono indicato a uno script (solo cifre con il prefisso), escluso `--confirm <rif>`. */
+export function phoneArgument(args: string[], fallback?: string): string {
+  const confirmIndex = args.indexOf("--confirm");
+  const positional = args.filter(
+    (_, index) => index !== confirmIndex && index !== confirmIndex + 1,
+  );
+  if (positional.length > 1)
+    throw new Error("Indica al massimo un numero di telefono");
+  const phone = positional[0] ?? fallback;
+  if (!phone) throw new Error("Indica il numero di telefono");
+  if (!/^\d{8,15}$/.test(phone)) {
+    throw new Error(
+      `Numero non valido: ${phone}. Usa solo cifre con il prefisso, es. 393331234567`,
+    );
+  }
+  return phone;
+}
+
 export function testPhones(): string[] {
   return [
     "TEST_PHONE_USER_A",

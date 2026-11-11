@@ -57,13 +57,14 @@ A ogni pull request GitHub Actions esegue lint, formattazione, typecheck e test 
 
 Il database vive nel progetto Supabase; la sua struttura è descritta dai file in `supabase/migrations/`, versionati in git. Docker non serve: tutti i comandi lavorano sul progetto remoto. La prima volta: `npx supabase login` (da un terminale normale, apre il browser) e `npx supabase link --project-ref <riferimento>`.
 
-| Comando                                                | Cosa fa                                                                                                     |
-| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `npm run db:push`                                      | Applica al progetto le migrazioni nuove                                                                     |
-| `npm run db:types`                                     | Rigenera `src/types/database.ts` dallo schema del progetto                                                  |
-| `npm run db:seed -- --confirm <rif>`                   | Carica i dati di esempio: orario 9–23, 3 sport, **prezzi finti**                                            |
-| `npm run admin:superadmin -- [numero] --confirm <rif>` | Dà il ruolo superadmin a un utente (senza numero: `TEST_PHONE_SUPERADMIN`); vale dal suo accesso successivo |
-| `npm run db:reset-test -- --confirm <rif>`             | Cancella prenotazioni e profili dei soli utenti di prova                                                    |
+| Comando                                                | Cosa fa                                                                                                                         |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run db:push`                                      | Applica al progetto le migrazioni nuove                                                                                         |
+| `npm run db:types`                                     | Rigenera `src/types/database.ts` dallo schema del progetto                                                                      |
+| `npm run db:seed -- --confirm <rif>`                   | Carica i dati di esempio: orario 9–23, 3 sport, **prezzi finti**                                                                |
+| `npm run admin:superadmin -- [numero] --confirm <rif>` | Dà il ruolo superadmin a un utente (senza numero: `TEST_PHONE_SUPERADMIN`); vale dal suo accesso successivo                     |
+| `npm run admin:revoke -- <numero> --confirm <rif>`     | Toglie il ruolo superadmin: salvataggi bloccati subito, pagine di Gestione visibili fino al rinnovo dell'accesso (circa un'ora) |
+| `npm run db:reset-test -- --confirm <rif>`             | Cancella prenotazioni e profili dei soli utenti di prova                                                                        |
 
 `<rif>` è il riferimento del progetto, la parte iniziale dell'URL (`https://<rif>.supabase.co`): gli script che modificano dati lo chiedono per evitare di agire sul progetto sbagliato.
 
