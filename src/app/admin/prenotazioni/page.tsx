@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Temporal } from "temporal-polyfill";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, linkClassName } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { periodOutsideSchedule } from "@/domain/block";
 import { formatPrice } from "@/domain/money";
@@ -220,7 +220,7 @@ export default async function AdminBookingsPage({
           {page > 1 && (
             <Link
               href={`${query({ pagina: String(page - 1) })}#storico`}
-              className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
+              className={linkClassName}
             >
               Più recenti
             </Link>
@@ -231,7 +231,7 @@ export default async function AdminBookingsPage({
           {page < pages && (
             <Link
               href={`${query({ pagina: String(page + 1) })}#storico`}
-              className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
+              className={linkClassName}
             >
               Meno recenti
             </Link>

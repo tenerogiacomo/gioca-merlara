@@ -16,10 +16,18 @@ async function tabTo(page: Page, target: Locator, maxSteps = 120) {
         element.tagName === "NEXTJS-PORTAL"
       )
         return null;
-      const style = getComputedStyle(element);
+      // Un controllo nascosto (es. casella `sr-only`) mostra il focus sull'etichetta che lo
+      // contiene: si controlla l'elemento che si vede davvero.
+      const rect = element.getBoundingClientRect();
+      const shown =
+        rect.width < 4 || rect.height < 4
+          ? (element.closest("label") as HTMLElement | null)
+          : element;
+      if (!shown) return { label: element.tagName, visible: false };
+      const style = getComputedStyle(shown);
       return {
         label: (
-          element.textContent ||
+          shown.textContent ||
           element.getAttribute("aria-label") ||
           element.tagName
         )
@@ -68,6 +76,18 @@ test("prenotazione completa solo con la tastiera, con il focus sempre visibile",
   await page.keyboard.press("Enter");
 
   await expect(page.getByText("Prenotazione confermata")).toBeVisible();
+});
+
+test("gestione dei prezzi da tastiera: focus visibile anche sui giorni", async ({
+  page,
+}) => {
+  await signIn(page, "SUPERADMIN");
+  await page.goto("/admin/prezzi/calcetto");
+  await tabTo(page, page.getByRole("checkbox", { name: "Domenica" }).first());
+  await tabTo(
+    page,
+    page.getByRole("button", { name: "Salva i prezzi di Calcetto" }),
+  );
 });
 
 test.describe("schermo stretto (360 px)", () => {

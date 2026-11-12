@@ -11,12 +11,14 @@ test.describe.configure({ mode: "serial" });
 
 // I test modificano orario, sport e prezzi: si ripristinano subito, così i test che seguono
 // (prenotazioni) trovano i dati di esempio qualunque sia il giorno della settimana.
-const admin = createAdminClient();
-let snapshot: ConfigSnapshot;
+let snapshot: ConfigSnapshot | undefined;
 test.beforeAll(async () => {
-  snapshot = await snapshotConfig(admin);
+  if (process.env.SUPABASE_SECRET_KEY)
+    snapshot = await snapshotConfig(createAdminClient());
 });
-test.afterAll(() => restoreConfig(admin, snapshot));
+test.afterAll(async () => {
+  if (snapshot) await restoreConfig(createAdminClient(), snapshot);
+});
 
 test("senza accesso l'area di gestione non esiste", async ({ page }) => {
   const response = await page.goto("/admin");

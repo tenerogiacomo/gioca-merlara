@@ -1,3 +1,4 @@
+import { linkClassName } from "@/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Temporal } from "temporal-polyfill";
@@ -69,10 +70,7 @@ export default async function BookingPage({
           Questo orario non si può più prenotare: forse qualcuno l&apos;ha
           appena preso.
         </Alert>
-        <Link
-          href="/prenota"
-          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
-        >
+        <Link href="/prenota" className={linkClassName}>
           Torna al calendario
         </Link>
       </section>
@@ -90,10 +88,7 @@ export default async function BookingPage({
         options={options}
         autocert={{ title: AUTOCERT_TITLE, paragraphs: AUTOCERT_PARAGRAPHS }}
       />
-      <Link
-        href="/prenota"
-        className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
-      >
+      <Link href="/prenota" className={linkClassName}>
         Torna al calendario
       </Link>
     </section>

@@ -1,3 +1,4 @@
+import { linkClassName } from "@/components/ui/button";
 import Link from "next/link";
 
 const LINKS = [
@@ -12,11 +13,7 @@ export function AdminNav() {
   return (
     <nav aria-label="Gestione" className="flex flex-wrap gap-x-4">
       {LINKS.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
-        >
+        <Link key={link.href} href={link.href} className={linkClassName}>
           {link.label}
         </Link>
       ))}

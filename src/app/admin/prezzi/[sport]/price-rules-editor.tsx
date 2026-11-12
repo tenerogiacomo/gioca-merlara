@@ -81,7 +81,7 @@ export function PriceRulesEditor({
                 <label
                   key={day}
                   className={cx(
-                    "flex size-11 cursor-pointer items-center justify-center rounded-full border text-base font-semibold",
+                    "flex size-11 cursor-pointer items-center justify-center rounded-full border text-base font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
                     checked
                       ? "border-primary bg-accent-soft text-primary"
                       : "border-field-border bg-surface text-text-muted",

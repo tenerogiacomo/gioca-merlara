@@ -1,31 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
+import { linkClassName } from "@/components/ui/button";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/server/auth";
-
-const linkClass =
-  "inline-flex min-h-11 items-center font-semibold text-primary hover:underline";
 
 async function AccountLinks() {
   const user = await getCurrentUser();
   if (!user) {
     return (
-      <Link href="/accedi" className={linkClass}>
+      <Link href="/accedi" className={linkClassName}>
         Accedi
       </Link>
     );
   }
   return (
     <>
-      <Link href="/prenotazioni" className={linkClass}>
+      <Link href="/prenotazioni" className={linkClassName}>
         Prenotazioni
       </Link>
       {user.isSuperadmin && (
-        <Link href="/admin" className={linkClass}>
+        <Link href="/admin" className={linkClassName}>
           Gestione
         </Link>
       )}
-      <Link href="/profilo" className={linkClass}>
+      <Link href="/profilo" className={linkClassName}>
         Profilo
       </Link>
     </>
@@ -50,7 +48,7 @@ export function SiteHeader() {
           aria-label="Principale"
           className="flex flex-wrap justify-end gap-x-4 gap-y-1"
         >
-          <Link href="/prenota" className={linkClass}>
+          <Link href="/prenota" className={linkClassName}>
             Prenota
           </Link>
           <Suspense fallback={null}>

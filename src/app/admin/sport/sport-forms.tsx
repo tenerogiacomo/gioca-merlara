@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, linkClassName } from "@/components/ui/button";
 import { TextField } from "@/components/ui/text-field";
 import { createSportAction, updateSportAction } from "../actions";
 import { FormFeedback } from "../form-feedback";
@@ -52,10 +52,7 @@ export function SportRowForm({ sport }: { sport: Sport }) {
         >
           Salva {sport.name}
         </Button>
-        <Link
-          href={`/admin/prezzi/${sport.id}`}
-          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
-        >
+        <Link href={`/admin/prezzi/${sport.id}`} className={linkClassName}>
           Prezzi di {sport.name}
         </Link>
       </div>
