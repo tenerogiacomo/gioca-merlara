@@ -40,3 +40,17 @@ export function maskPhone(normalized: string): string {
   const prefix = normalized.startsWith("39") ? "39" : normalized.slice(0, 2);
   return `+${prefix} ••• ••• ${normalized.slice(-3)}`;
 }
+
+/**
+ * Numero leggibile, es. `+39 333 123 4567`. Con `national` senza prefisso (`333 123 4567`):
+ * nel CSV un valore che inizia con `+` verrebbe preso per una formula.
+ */
+export function formatPhone(
+  normalized: string,
+  { national = false }: { national?: boolean } = {},
+): string {
+  const local = normalized.startsWith("39") ? normalized.slice(2) : normalized;
+  const grouped = local.replace(/^(\d{3})(\d{3})(\d+)$/, "$1 $2 $3");
+  if (!normalized.startsWith("39")) return `+${normalized}`;
+  return national ? grouped : `+39 ${grouped}`;
+}

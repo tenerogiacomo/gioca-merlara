@@ -97,8 +97,8 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 | S3 | Database e regole di accesso | Sì | Sì | — | `m1/s3-database-accessi.plan.md` | complete |
 | S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | `m1/s4-accesso-profilo.plan.md` | complete |
 | S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | `m1/s5-configurazione-superadmin.plan.md` | complete |
-| S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | `m1/s6-prenotazione.plan.md` | in-progress |
-| S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | — | pending |
+| S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | `m1/s6-prenotazione.plan.md` | complete |
+| S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | `m1/s7-blocchi-annulli.plan.md` | in-progress |
 | S8 | Rifinitura e consegna | Sì | No | Verifica l'aderenza a `DESIGN.md` | — | pending |
 
 ### Look and feel: `DESIGN.md` (richiesta del committente)
@@ -155,6 +155,8 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
 ### Lista di controllo prima del lancio
 Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma raccolta qui per non perderla):
 - [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
+- [ ] **Script di amministrazione verso la produzione**: URL e chiave secret di produzione in un file locale separato (es. `.env.production.local`, fuori da git), mai in `.env.local`; `admin:superadmin` e `admin:revoke` lanciati con quel file e `--confirm` col riferimento del progetto di produzione.
+- [ ] **Ruolo superadmin assegnato al numero reale** di chi gestisce (accede una volta all'app, poi `admin:superadmin` sul progetto di produzione; il ruolo vale dal login successivo).
 - [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
 - [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
 - [ ] Protezione dall'abuso degli SMS: captcha (Turnstile o hCaptcha) sull'invio del codice, limiti per indirizzo IP e per numero, tetto di spesa e paesi ammessi presso il provider SMS. L'app accetta già solo numeri italiani.

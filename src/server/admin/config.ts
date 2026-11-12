@@ -1,8 +1,7 @@
 import "server-only";
 import { Temporal } from "temporal-polyfill";
-import { slotStartsFor } from "@/domain/schedule";
-import { toRome } from "@/domain/time";
-import type { PriceRule, Weekday, WeeklySchedule } from "@/domain/types";
+import { periodOutsideSchedule } from "@/domain/block";
+import type { PriceRule, WeeklySchedule } from "@/domain/types";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { toPriceRules, toWeeklySchedule } from "@/server/db/mappers";
 import type { Database } from "@/types/database";
@@ -46,18 +45,17 @@ export async function futureBookingsOutside(
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase
     .from("bookings")
-    .select("starts_at")
+    .select("starts_at, ends_at")
     .eq("status", "active")
     .gt("starts_at", new Date().toISOString())
     .order("starts_at");
   if (error) throw error;
   return data
-    .filter(({ starts_at }) => {
-      const local = toRome(Temporal.Instant.from(starts_at));
-      const minutes = local.hour * 60 + local.minute;
-      return !slotStartsFor(schedule, local.dayOfWeek as Weekday).includes(
-        minutes,
-      );
-    })
+    .filter(({ starts_at, ends_at }) =>
+      periodOutsideSchedule(schedule, {
+        startsAt: Temporal.Instant.from(starts_at),
+        endsAt: Temporal.Instant.from(ends_at),
+      }),
+    )
     .map(({ starts_at }) => dateTime.format(new Date(starts_at)));
 }

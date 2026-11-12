@@ -170,3 +170,16 @@ export function describeUncovered(
       `${WEEKDAY_NAMES[range.weekday]} ${formatLocalTime(range.from)}–${formatLocalTime(range.to)}`,
   );
 }
+
+/** Motivo facoltativo di blocchi e annulli: al massimo 200 caratteri, senza caratteri invisibili. */
+export function parseReason(
+  value: unknown,
+): Result<string | null, "invalid_reason"> {
+  const text = typeof value === "string" ? value.trim() : "";
+  if (text === "") return ok(null);
+  if (text.length > 200 || /\p{C}/u.test(text)) return err("invalid_reason");
+  return ok(text);
+}
+
+export const REASON_ERROR =
+  "Il motivo può avere al massimo 200 caratteri, su una sola riga.";

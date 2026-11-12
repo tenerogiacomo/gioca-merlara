@@ -46,6 +46,7 @@ export type Database = {
         Row: {
           autocert_accepted_at: string;
           autocert_version: string;
+          cancel_reason: string | null;
           cancelled_at: string | null;
           created_at: string;
           ends_at: string;
@@ -60,6 +61,7 @@ export type Database = {
         Insert: {
           autocert_accepted_at: string;
           autocert_version: string;
+          cancel_reason?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
           ends_at: string;
@@ -73,6 +75,7 @@ export type Database = {
         Update: {
           autocert_accepted_at?: string;
           autocert_version?: string;
+          cancel_reason?: string | null;
           cancelled_at?: string | null;
           created_at?: string;
           ends_at?: string;
@@ -223,6 +226,20 @@ export type Database = {
           starts_at: string;
         }[];
       };
+      create_block: {
+        Args: {
+          p_confirmed_ids: string[];
+          p_created_by: string;
+          p_ends_at: string;
+          p_reason: string;
+          p_starts_at: string;
+        };
+        Returns: Json;
+      };
+      delete_bookings: {
+        Args: { p_from: string; p_ids: string[]; p_to: string };
+        Returns: number;
+      };
       is_superadmin: { Args: Record<PropertyKey, never>; Returns: boolean };
       occupied_slots: {
         Args: { p_from: string; p_to: string };
@@ -240,6 +257,13 @@ export type Database = {
       replace_price_rules: {
         Args: { p_rules: Json; p_sport_id: string };
         Returns: undefined;
+      };
+      user_phones: {
+        Args: { p_ids: string[] };
+        Returns: {
+          id: string;
+          phone: string;
+        }[];
       };
     };
     Enums: {
