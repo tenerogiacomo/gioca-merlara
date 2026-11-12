@@ -70,7 +70,7 @@ export function PriceRulesEditor({
           <div
             role="group"
             aria-label={`Giorni della fascia ${index + 1}`}
-            className="flex gap-1"
+            className="flex flex-wrap gap-1"
           >
             {DAYS.map(([day, letter, name]) => {
               const checked = rule.weekdays.includes(day);

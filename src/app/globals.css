@@ -125,4 +125,11 @@
     font-family: var(--font-display);
     color: var(--color-primary);
   }
+
+  /* Focus da tastiera (DESIGN.md §6): anello blue-700 di 2 px, distanziato 2 px, anche su link,
+     caselle e scelte che non hanno uno stile proprio. Pulsanti e campi lo definiscono da sé. */
+  :focus-visible {
+    outline: 2px solid var(--color-blue-700);
+    outline-offset: 2px;
+  }
 }
