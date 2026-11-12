@@ -98,8 +98,9 @@ S1 Fondamenta → S2 Regole di dominio → S3 Database e accessi → S4 Accesso 
 | S4 | Accesso e profilo | Sì | Sì | Segue `DESIGN.md` | `m1/s4-accesso-profilo.plan.md` | complete |
 | S5 | Configurazione superadmin: orario, sport e prezzi | Sì | Sì | Segue `DESIGN.md` | `m1/s5-configurazione-superadmin.plan.md` | complete |
 | S6 | Prenotazione e annullo dell'utente | Sì | Sì | Segue `DESIGN.md` | `m1/s6-prenotazione.plan.md` | complete |
-| S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | `m1/s7-blocchi-annulli.plan.md` | in-progress |
-| S8 | Rifinitura e consegna | Sì | No | Verifica l'aderenza a `DESIGN.md` | — | pending |
+| S7 | Blocchi, elenco prenotazioni e annulli d'ufficio | Sì | Sì | Segue `DESIGN.md` | `m1/s7-blocchi-annulli.plan.md` | complete |
+| S8 | Rifinitura e consegna | Sì | No | Verifica l'aderenza a `DESIGN.md` | `m1/s8-rifinitura-consegna.plan.md` | in-progress |
+| S9 | Design definitivo (modifiche rinviate, icona del sito) | Sì | No | Il committente detta il design; Claude aggiorna `DESIGN.md` e lo realizza | — | pending |
 
 ### Look and feel: `DESIGN.md` (richiesta del committente)
 Le scelte di stile dell'interfaccia sono del committente, soprattutto per le schermate dell'utente-tipo (residente o visitatore da smartphone).
