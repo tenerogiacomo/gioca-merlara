@@ -155,6 +155,7 @@ Le scelte di stile dell'interfaccia sono del committente, soprattutto per le sch
 ### Lista di controllo prima del lancio
 Da completare prima di aprire il servizio al pubblico (oltre la milestone 1, ma raccolta qui per non perderla):
 - [ ] **Progetto Supabase di produzione separato** da quello di sviluppo (consigliato): senza `SUPABASE_PROJECT_ENV=development`, senza numeri di prova, con la sua chiave secret solo nell'hosting.
+- [ ] **Script di amministrazione verso la produzione**: URL e chiave secret di produzione in un file locale separato (es. `.env.production.local`, fuori da git), mai in `.env.local`; `admin:superadmin` e `admin:revoke` lanciati con quel file e `--confirm` col riferimento del progetto di produzione.
 - [ ] **Ruolo superadmin assegnato al numero reale** di chi gestisce (accede una volta all'app, poi `admin:superadmin` sul progetto di produzione; il ruolo vale dal login successivo).
 - [ ] Se si usa lo stesso progetto: numeri di prova rimossi (o scadenza nel passato), ruolo superadmin tolto al numero di prova, utenti di prova cancellati.
 - [ ] Chiavi classiche `anon` e `service_role` disattivate dal pannello.
