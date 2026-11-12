@@ -1,7 +1,22 @@
 import { expect, test } from "@playwright/test";
+import {
+  createAdminClient,
+  restoreConfig,
+  snapshotConfig,
+  type ConfigSnapshot,
+} from "../scripts/lib/admin";
 import { signIn } from "./helpers";
 
 test.describe.configure({ mode: "serial" });
+
+// I test modificano orario, sport e prezzi: si ripristinano subito, così i test che seguono
+// (prenotazioni) trovano i dati di esempio qualunque sia il giorno della settimana.
+const admin = createAdminClient();
+let snapshot: ConfigSnapshot;
+test.beforeAll(async () => {
+  snapshot = await snapshotConfig(admin);
+});
+test.afterAll(() => restoreConfig(admin, snapshot));
 
 test("senza accesso l'area di gestione non esiste", async ({ page }) => {
   const response = await page.goto("/admin");
@@ -71,7 +86,7 @@ test.describe("superadmin", () => {
     await page.getByLabel("Nuovo sport").fill("pallavolo prova");
     await page.getByRole("button", { name: "Aggiungi sport" }).click();
     await expect(
-      page.getByText('Esiste già uno sport chiamato "pallavolo prova".'),
+      page.getByText(/Esiste già uno sport chiamato "pallavolo prova"/),
     ).toBeVisible();
 
     const form = page.locator("form").filter({

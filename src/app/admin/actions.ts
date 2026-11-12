@@ -95,14 +95,22 @@ export async function createSportAction(
   }
   const { sports } = await loadConfig();
   if (sports.some((sport) => sport.name.toLowerCase() === name.toLowerCase())) {
-    return { errors: [`Esiste già uno sport chiamato "${name}".`] };
+    return {
+      errors: [
+        `Esiste già uno sport chiamato "${name}": scegli un altro nome.`,
+      ],
+    };
   }
   const sortOrder = Math.max(0, ...sports.map((sport) => sport.sort_order)) + 1;
   const { error } = await createSupabaseServiceClient()
     .from("sports")
     .insert({ id, name, active: true, sort_order: sortOrder });
   if (error?.code === "23505")
-    return { errors: [`Esiste già uno sport chiamato "${name}".`] };
+    return {
+      errors: [
+        `Esiste già uno sport chiamato "${name}": scegli un altro nome.`,
+      ],
+    };
   if (error) return { errors: [SAVE_FAILED] };
   revalidatePath("/admin", "layout");
   return {
@@ -136,7 +144,11 @@ export async function updateSportAction(
     .eq("id", id)
     .select("id");
   if (error?.code === "23505")
-    return { errors: [`Esiste già uno sport chiamato "${name}".`] };
+    return {
+      errors: [
+        `Esiste già uno sport chiamato "${name}": scegli un altro nome.`,
+      ],
+    };
   if (error || data.length === 0) return { errors: [SAVE_FAILED] };
   revalidatePath("/admin", "layout");
   return { ok: "Salvato." };

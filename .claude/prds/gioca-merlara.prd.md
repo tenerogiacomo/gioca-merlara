@@ -58,7 +58,7 @@ Il servizio è costruito su misura, non adottato da un SaaS di prenotazione esis
 
 | # | Milestone | Risultato | Stato | Piano |
 |---|---|---|---|---|
-| 1 | Prenotazione regolamentata | Le persone creano il profilo (anagrafica + OTP), vedono le disponibilità, prenotano e accettano l'autocertificazione; il superadmin gestisce orario di default, sport, prezzi per sport e fascia, blocchi e annulli | in-progress | `.claude/plans/prenotazione-regolamentata.plan.md` |
+| 1 | Prenotazione regolamentata | Le persone creano il profilo (anagrafica + OTP), vedono le disponibilità, prenotano e accettano l'autocertificazione; il superadmin gestisce orario di default, sport, prezzi per sport e fascia, blocchi e annulli | in-progress (S1–S8 completati; manca S9, design definitivo) | `.claude/plans/prenotazione-regolamentata.plan.md` |
 | 2 | Pagamento | Le persone pagano online a NEOS APS o in contanti in esercizio (nome + saldo entro il giorno dello slot, riconciliazione per nome); annulli con voucher a portafoglio | pending | — |
 | 3 | Accesso autonomo | Le persone aprono i due lucchetti smart coi PIN della prenotazione e richiudono a fine slot, senza personale; sopralluogo, installazione, reperibile e manutenzione attivi | pending | — |
 
@@ -73,6 +73,7 @@ Ogni domanda ha un proprietario. Nessuna scadenza, per scelta del committente; i
 - [ ] **Curatore**: come si registrano i visitatori senza codice fiscale (es. stranieri), visto che il profilo lo richiede?
 - [ ] **Curatore**: l'annullo di una fascia gratuita genera qualcosa, visto che il voucher vale solo sulle fasce a pagamento?
 - [ ] **Curatore**: la fascia gratuita "per i ragazzi" è riservata a loro o aperta a tutti? Se è riservata, come si concilia con la regola che al lancio prenota solo un maggiorenne?
+- [ ] **Curatore**: serve un limite di prenotazioni per persona (es. ore a settimana o prenotazioni future)? Nella milestone 1 non c'è: una persona può occupare molti orari.
 - [ ] **Curatore**: orario settimanale di default (al lancio 9–23, da confermare con l'amministrazione) e periodi di indisponibilità; sopralluogo tecnico — punti di montaggio dei due lucchetti, compatibilità dei varchi, esistenza di chiavi di servizio (bagni, quadro luci): se esistono, restano in un box aperto interno
 - [ ] **Direttivo NEOS**: accordo formale col Comune per gestione e incassi, comprensivo dell'autorizzazione a usare lo stemma comunale (ed eventuale file ufficiale); struttura tariffaria (elenco degli sport, importi per sport e fascia, orario della fascia gratuita); titolare del trattamento dei dati personali; rotazione del reperibile
 - [ ] **Sviluppo**: scelta del PSP (Stripe / Satispay / PayPal); provider email e SMS (es. Twilio per gli SMS); dettagli di integrazione dell'API igloohome (algoPIN, massimo 199 PIN attivi per lucchetto, PIN non revocabili da remoto). Verificare se il limite di 199 PIN attivi conta i PIN già generati per l'intero orizzonte di prenotazione: con slot da 60 minuti e orizzonte di 14 giorni, un orario di apertura di 14 ore al giorno arriva a 196 PIN

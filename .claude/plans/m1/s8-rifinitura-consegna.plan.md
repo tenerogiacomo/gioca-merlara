@@ -67,5 +67,13 @@ Chiudere la milestone 1. Ogni schermata segue `DESIGN.md` ed è accessibile da s
 | Contrasti della palette insufficienti | Segnalati al committente con i valori; nessun cambio di colore di iniziativa |
 | Test end-to-end instabili | Tre esecuzioni complete di fila; i test instabili si correggono, non si ripetono in automatico |
 
+## Note di realizzazione
+- **Accessibilità**: nessuna violazione axe (di qualsiasi gravità) su 17 pagine e stati, compresi messaggi d'errore e avvisi. Nessun contrasto da segnalare.
+- **Tastiera**: aggiunto l'anello di focus di `DESIGN.md` §6 anche a link e caselle (prima avevano quello del browser).
+- **Schermo stretto**: a 360 px i giorni della settimana dei prezzi uscivano dallo schermo; ora vanno a capo.
+- **Aderenza a `DESIGN.md`**: corretti area toccabile di 44 px sui link, titoli di sezione in grassetto 700, spazio di 24 px tra sezioni, 12 px tra i gruppi del modulo di prenotazione, padding dei pulsanti testuali, raggio delle schede, sottotitoli dell'area di gestione, testo della navigazione di gestione a 16 px, messaggi d'errore che dicono cosa fare.
+- **Casi non coperti da `DESIGN.md`** (da decidere in S9): scelta del giorno nel calendario, righe di elenco senza ombra, conferme in linea, paginazione e filtro per date, stati vuoti e di caricamento, titolo dei messaggi, hover del pulsante secondario, larghezza massima su desktop, aspetto dei link isolati.
+- **Test**: sessioni degli utenti di prova riusate tra i test (meno codici SMS, sotto il limite orario del progetto); il test di gestione ripristina subito orario, sport e prezzi (prima il test delle prenotazioni simultanee falliva quando cadeva di lunedì). End-to-end verdi tre volte di fila.
+
 ## Rollback
 Revert della pull request: nessuna modifica al database.

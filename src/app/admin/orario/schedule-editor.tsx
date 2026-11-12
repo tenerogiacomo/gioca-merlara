@@ -48,7 +48,10 @@ export function ScheduleEditor({
           className="flex flex-col gap-2 rounded-card bg-surface p-4 shadow-card"
         >
           <legend className="sr-only">{name}</legend>
-          <p className="text-lg font-semibold" aria-hidden>
+          <p
+            className="font-display text-xl font-semibold text-primary"
+            aria-hidden
+          >
             {name}
           </p>
           {schedule[day].length === 0 && (
@@ -105,7 +108,7 @@ export function ScheduleEditor({
           <div className="flex flex-wrap gap-x-4">
             <Button
               variant="text"
-              className="px-0"
+              className="self-start"
               onClick={() =>
                 update(day, [
                   ...schedule[day],
@@ -117,7 +120,7 @@ export function ScheduleEditor({
             </Button>
             <Button
               variant="text"
-              className="px-0"
+              className="self-start"
               onClick={() =>
                 setSchedule(
                   Object.fromEntries(

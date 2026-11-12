@@ -10,15 +10,12 @@ const LINKS = [
 
 export function AdminNav() {
   return (
-    <nav
-      aria-label="Gestione"
-      className="flex flex-wrap gap-x-4 gap-y-1 text-sm"
-    >
+    <nav aria-label="Gestione" className="flex flex-wrap gap-x-4">
       {LINKS.map((link) => (
         <Link
           key={link.href}
           href={link.href}
-          className="font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
         >
           {link.label}
         </Link>

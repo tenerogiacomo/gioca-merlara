@@ -168,7 +168,7 @@ export function RemoveBlockButton({
     return (
       <Button
         variant="text"
-        className="self-start px-0"
+        className="self-start"
         onClick={() => setConfirming(true)}
       >
         Rimuovi il blocco di {label}

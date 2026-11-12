@@ -64,7 +64,10 @@ export function PriceRulesEditor({
           )}
         >
           <legend className="sr-only">Fascia {index + 1}</legend>
-          <p className="text-lg font-semibold" aria-hidden>
+          <p
+            className="font-display text-xl font-semibold text-primary"
+            aria-hidden
+          >
             Fascia {index + 1}
           </p>
           <div
@@ -127,7 +130,7 @@ export function PriceRulesEditor({
           />
           <Button
             variant="text"
-            className="self-start px-0"
+            className="self-start"
             onClick={() =>
               setRules((current) => current.filter((_, i) => i !== index))
             }

@@ -71,7 +71,7 @@ export default async function BookingPage({
         </Alert>
         <Link
           href="/prenota"
-          className="font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
         >
           Torna al calendario
         </Link>
@@ -92,7 +92,7 @@ export default async function BookingPage({
       />
       <Link
         href="/prenota"
-        className="font-semibold text-primary hover:underline"
+        className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
       >
         Torna al calendario
       </Link>

@@ -54,7 +54,7 @@ export function SportRowForm({ sport }: { sport: Sport }) {
         </Button>
         <Link
           href={`/admin/prezzi/${sport.id}`}
-          className="font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
         >
           Prezzi di {sport.name}
         </Link>

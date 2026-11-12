@@ -69,7 +69,7 @@ export default async function MyBookingsPage({
           </Alert>
         )}
 
-      <h2 className="text-2xl font-semibold">Prossime</h2>
+      <h2 className="mt-2 text-2xl font-bold">Prossime</h2>
       {upcoming.length === 0 && (
         <p className="text-text-muted">Nessuna prenotazione in programma.</p>
       )}
@@ -96,7 +96,7 @@ export default async function MyBookingsPage({
 
       {others.length > 0 && (
         <>
-          <h2 className="text-2xl font-semibold">Passate e annullate</h2>
+          <h2 className="mt-2 text-2xl font-bold">Passate e annullate</h2>
           <ul className="flex flex-col gap-2">
             {others.map((row) => (
               <li

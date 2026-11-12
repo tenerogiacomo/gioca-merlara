@@ -3,7 +3,8 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/server/auth";
 
-const linkClass = "font-semibold text-primary hover:underline";
+const linkClass =
+  "inline-flex min-h-11 items-center font-semibold text-primary hover:underline";
 
 async function AccountLinks() {
   const user = await getCurrentUser();

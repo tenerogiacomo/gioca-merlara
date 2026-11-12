@@ -115,7 +115,7 @@ export default async function AdminBookingsPage({
       <h1 className="text-3xl font-bold">Prenotazioni</h1>
       <AdminNav />
 
-      <h2 className="text-2xl font-semibold">Oggi e prossime</h2>
+      <h2 className="mt-2 text-2xl font-bold">Oggi e prossime</h2>
       {upcoming.length === 0 && (
         <p className="text-text-muted">Nessuna prenotazione in programma.</p>
       )}
@@ -154,7 +154,7 @@ export default async function AdminBookingsPage({
         </div>
       ))}
 
-      <h2 id="storico" className="text-2xl font-semibold">
+      <h2 id="storico" className="mt-2 text-2xl font-bold">
         Storico
       </h2>
       {params.aggiornato === "1" && (
@@ -220,7 +220,7 @@ export default async function AdminBookingsPage({
           {page > 1 && (
             <Link
               href={`${query({ pagina: String(page - 1) })}#storico`}
-              className="font-semibold text-primary hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
             >
               Più recenti
             </Link>
@@ -231,7 +231,7 @@ export default async function AdminBookingsPage({
           {page < pages && (
             <Link
               href={`${query({ pagina: String(page + 1) })}#storico`}
-              className="font-semibold text-primary hover:underline"
+              className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
             >
               Meno recenti
             </Link>

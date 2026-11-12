@@ -34,7 +34,7 @@ export default async function AdminPage() {
         </ul>
         <Link
           href="/admin/orario"
-          className="font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
         >
           Modifica l&apos;orario
         </Link>
@@ -53,7 +53,7 @@ export default async function AdminPage() {
             <div key={sport.id} className="flex flex-col gap-1">
               <Link
                 href={`/admin/prezzi/${sport.id}`}
-                className="font-semibold text-primary hover:underline"
+                className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
               >
                 {sport.name}: prezzi
               </Link>
@@ -68,7 +68,7 @@ export default async function AdminPage() {
         })}
         <Link
           href="/admin/sport"
-          className="font-semibold text-primary hover:underline"
+          className="inline-flex min-h-11 items-center font-semibold text-primary hover:underline"
         >
           Gestisci gli sport
         </Link>
