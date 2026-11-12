@@ -118,7 +118,7 @@ export default async function CalendarPage({
           </nav>
 
           {selected && (
-            <h2 className="text-2xl font-semibold first-letter:uppercase">
+            <h2 className="mt-2 text-2xl font-bold first-letter:uppercase">
               {formatDay(selected.startsAt)}
             </h2>
           )}
@@ -131,7 +131,7 @@ export default async function CalendarPage({
                   <li key={slot.startsAt.toString()}>
                     <Link
                       href={`/prenota/${encodeURIComponent(slot.startsAt.toString())}`}
-                      className="flex flex-col rounded-control bg-surface p-3 shadow-card hover:bg-accent-soft"
+                      className="flex flex-col rounded-card bg-surface p-3 shadow-card hover:bg-accent-soft"
                     >
                       <span className="font-semibold text-primary">
                         {time} · Libero

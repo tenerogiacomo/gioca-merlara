@@ -68,7 +68,7 @@ export function CodeForm({
           <Button
             type="submit"
             variant="text"
-            className="px-0"
+            className="self-start"
             disabled={secondsLeft > 0}
             pending={resending}
             pendingLabel="Invio in corso…"
@@ -78,7 +78,10 @@ export function CodeForm({
               : "Invia un nuovo codice"}
           </Button>
         </form>
-        <Link href="/accedi" className="text-primary hover:underline">
+        <Link
+          href="/accedi"
+          className="inline-flex min-h-11 items-center text-primary hover:underline"
+        >
           Cambia numero
         </Link>
       </div>

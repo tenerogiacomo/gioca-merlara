@@ -30,7 +30,7 @@ export function BookingForm({
   );
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form action={action} className="flex flex-col gap-3">
       <input type="hidden" name="startsAt" value={startsAt} />
       {/* Valori scelti inviati da campi nascosti: dopo un invio rifiutato React azzera il modulo,
           e i pulsanti di scelta tornerebbero vuoti. */}

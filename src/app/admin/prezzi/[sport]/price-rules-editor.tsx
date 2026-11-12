@@ -64,13 +64,16 @@ export function PriceRulesEditor({
           )}
         >
           <legend className="sr-only">Fascia {index + 1}</legend>
-          <p className="text-lg font-semibold" aria-hidden>
+          <p
+            className="font-display text-xl font-semibold text-primary"
+            aria-hidden
+          >
             Fascia {index + 1}
           </p>
           <div
             role="group"
             aria-label={`Giorni della fascia ${index + 1}`}
-            className="flex gap-1"
+            className="flex flex-wrap gap-1"
           >
             {DAYS.map(([day, letter, name]) => {
               const checked = rule.weekdays.includes(day);
@@ -78,7 +81,7 @@ export function PriceRulesEditor({
                 <label
                   key={day}
                   className={cx(
-                    "flex size-11 cursor-pointer items-center justify-center rounded-full border text-base font-semibold",
+                    "flex size-11 cursor-pointer items-center justify-center rounded-full border text-base font-semibold has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary",
                     checked
                       ? "border-primary bg-accent-soft text-primary"
                       : "border-field-border bg-surface text-text-muted",
@@ -127,7 +130,7 @@ export function PriceRulesEditor({
           />
           <Button
             variant="text"
-            className="self-start px-0"
+            className="self-start"
             onClick={() =>
               setRules((current) => current.filter((_, i) => i !== index))
             }

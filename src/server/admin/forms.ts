@@ -141,7 +141,7 @@ export function priceIssueMessage(code: PriceRuleIssue["code"]): string {
     case "invalid_price":
       return "Il prezzo non è valido: scrivi un importo in euro, es. 12,50, oppure 0 per gratis.";
     case "overlap":
-      return "Questa fascia si sovrappone a un'altra dello stesso sport.";
+      return "Questa fascia si sovrappone a un'altra dello stesso sport: cambia i giorni o gli orari.";
     case "mixed_free_paid":
       return "Nello stesso giorno e orario un altro sport ha una fascia gratuita (o a pagamento): una fascia deve essere gratuita o a pagamento per tutti gli sport.";
   }

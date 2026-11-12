@@ -16,7 +16,7 @@ export function CancelButton({ id, label }: { id: string; label: string }) {
     return (
       <Button
         variant="text"
-        className="self-start px-0"
+        className="self-start"
         onClick={() => setConfirming(true)}
       >
         Annulla la prenotazione di {label}

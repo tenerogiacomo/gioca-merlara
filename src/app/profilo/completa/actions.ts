@@ -25,12 +25,12 @@ const schema = z.object({
     .string()
     .trim()
     .min(1, "Scrivi il tuo nome.")
-    .max(100, "Il nome è troppo lungo."),
+    .max(100, "Il nome è troppo lungo: usa al massimo 100 caratteri."),
   lastName: z
     .string()
     .trim()
     .min(1, "Scrivi il tuo cognome.")
-    .max(100, "Il cognome è troppo lungo."),
+    .max(100, "Il cognome è troppo lungo: usa al massimo 100 caratteri."),
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Indica la data di nascita."),

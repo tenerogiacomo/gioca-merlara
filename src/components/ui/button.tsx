@@ -25,6 +25,10 @@ const variantClasses: Record<ButtonVariant, string> = {
 const baseClasses =
   "inline-flex min-h-11 items-center justify-center rounded-control px-4 text-base leading-tight font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary";
 
+/** Link isolato (fuori da una frase): testo blu, area toccabile di 44 px (DESIGN.md §4). */
+export const linkClassName =
+  "inline-flex min-h-11 items-center font-semibold text-primary hover:underline";
+
 /** Classi del pulsante, per dare lo stesso aspetto a un link (es. `<Link>` di Next.js). */
 export function buttonClassName({
   variant = "primary",

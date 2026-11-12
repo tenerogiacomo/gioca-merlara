@@ -27,7 +27,7 @@ export default async function BlocksPage() {
       </p>
       <BlockForm today={toRome(now).toPlainDate().toString()} />
 
-      <h2 className="text-2xl font-semibold">Blocchi in corso e futuri</h2>
+      <h2 className="mt-2 text-2xl font-bold">Blocchi in corso e futuri</h2>
       {blocks.length === 0 && (
         <p className="text-text-muted">Nessun blocco in programma.</p>
       )}

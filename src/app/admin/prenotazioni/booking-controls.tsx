@@ -23,7 +23,7 @@ export function AdminCancelButton({
     return (
       <Button
         variant="text"
-        className="self-start px-0"
+        className="self-start"
         onClick={() => setConfirming(true)}
       >
         Annulla d&apos;ufficio la prenotazione di {label}

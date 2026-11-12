@@ -1,3 +1,4 @@
+import { linkClassName } from "@/components/ui/button";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
@@ -32,10 +33,7 @@ export default async function AdminPage() {
             </li>
           ))}
         </ul>
-        <Link
-          href="/admin/orario"
-          className="font-semibold text-primary hover:underline"
-        >
+        <Link href="/admin/orario" className={linkClassName}>
           Modifica l&apos;orario
         </Link>
       </div>
@@ -53,7 +51,7 @@ export default async function AdminPage() {
             <div key={sport.id} className="flex flex-col gap-1">
               <Link
                 href={`/admin/prezzi/${sport.id}`}
-                className="font-semibold text-primary hover:underline"
+                className={linkClassName}
               >
                 {sport.name}: prezzi
               </Link>
@@ -66,10 +64,7 @@ export default async function AdminPage() {
             </div>
           );
         })}
-        <Link
-          href="/admin/sport"
-          className="font-semibold text-primary hover:underline"
-        >
+        <Link href="/admin/sport" className={linkClassName}>
           Gestisci gli sport
         </Link>
       </div>
