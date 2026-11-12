@@ -82,6 +82,8 @@ export async function signIn(
   const saved = sessions.get(who);
   if (saved && (await isSessionAlive(saved))) {
     await page.context().addCookies(saved);
+    // Come dopo un accesso vero: si arriva al profilo, con l'intestazione dell'utente.
+    await page.goto("/profilo");
     return;
   }
   sessions.delete(who);
